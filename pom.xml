@@ -10,11 +10,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>net.sf.cssbox</groupId>
+	<groupId>com.gk-software.oss.cssbox</groupId>
 	<artifactId>jstyleparser</artifactId>
-	<version>1.23-SNAPSHOT</version>
+	<version>1.23-b01-SNAPSHOT</version>
 	<name>jStyleParser</name>
-	<description>jStyleParser is a CSS parser written in Java. It has its own application interface that is designed to allow an efficient CSS processing in Java and mapping the values to the Java data types. It parses CSS 2.1 style sheets into structures that can be efficiently assigned to DOM elements. It is intended be the primary CSS parser for the CSSBox library. While handling errors, it is user agent conforming according to the CSS specification.</description>
+	<description>jStyleParser is a CSS parser written in Java. It has its own application interface that is designed to allow an efficient CSS processing in Java and mapping the values to the Java data types. It parses CSS 2.1 style sheets into structures that can be efficiently assigned to DOM elements. It is intended be the primary CSS parser for the CSSBox library. While handling errors, it is user agent conforming according to the CSS specification. This fork is maintained by GK Software.</description>
 	<url>http://cssbox.sourceforge.net/jstyleparser</url>
 
 	<licenses>
@@ -44,19 +44,25 @@
 				<role>Former developer</role>
 			</roles>
 		</developer>
+    <developer>
+			<name>Stefan Juschka</name>
+			<roles>
+				<role>Developer Fork</role>
+			</roles>
+		</developer>
 	</developers>
 	<contributors>
-    		<contributor>
-      			<name>Contributors at GitHub</name>
-      			<url>https://github.com/radkovo/jStyleParser/graphs/contributors</url>
-    		</contributor>
-  	</contributors>
+      <contributor>
+          <name>Contributors at GitHub</name>
+          <url>https://github.com/GK-Software-AG/jStyleParser/graphs/contributors</url>
+      </contributor>
+  </contributors>
 
 	<scm>
-		<url>https://github.com/radkovo/jStyleParser</url>
-		<connection>scm:git:git@github.com:radkovo/jStyleParser.git</connection>
-		<developerConnection>scm:git:git@github.com:radkovo/jStyleParser.git</developerConnection>
-		<tag>HEAD</tag>
+		<url>https://github.com/GK-Software-AG/jStyleParser.git</url>
+		<connection>scm:git:git@github.com:GK-Software-AG/jStyleParser.git</connection>
+		<developerConnection>scm:git:git@github.com:GK-Software-AG/jStyleParser.git</developerConnection>
+		<tag>GK-dev</tag>
 	</scm>
 	
     <properties>
@@ -74,12 +80,6 @@
 					<exclude>**/*.java</exclude>
 				</excludes>
 			</resource>
-			<!-- <resource>
-				<directory>src/main/antlr3</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource> -->
 		</resources>
 		
 		<plugins>
