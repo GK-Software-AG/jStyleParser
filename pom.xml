@@ -60,8 +60,8 @@
 
 	<scm>
 		<url>https://github.com/GK-Software-AG/jStyleParser.git</url>
-		<connection>scm:git:git@github.com:GK-Software-AG/jStyleParser.git</connection>
-		<developerConnection>scm:git:git@github.com:GK-Software-AG/jStyleParser.git</developerConnection>
+		<connection>scm:git:https://github.com/GK-Software-AG/jStyleParser.git</connection>
+		<developerConnection>scm:git:https://github.com/GK-Software-AG/jStyleParser.git</developerConnection>
 		<tag>GK-dev</tag>
 	</scm>
 	
