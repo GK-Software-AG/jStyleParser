@@ -62,7 +62,7 @@
 		<url>https://github.com/GK-Software-AG/jStyleParser.git</url>
 		<connection>scm:git:https://github.com/GK-Software-AG/jStyleParser.git</connection>
 		<developerConnection>scm:git:https://github.com/GK-Software-AG/jStyleParser.git</developerConnection>
-		<tag>jstyleparser-1.23-b01</tag>
+		<tag>GK-dev</tag>
 	</scm>
 	
     <properties>
