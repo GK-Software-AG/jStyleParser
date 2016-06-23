@@ -14,6 +14,11 @@ import CSSParser;
     public void init() {
         gCSSParser.init();
     }
+    
+    @Override
+	public void emitErrorMessage(String msg) {
+	   gCSSParser.emitErrorMessage(msg);
+	}
 }
 
 dummy : DUMMY ;

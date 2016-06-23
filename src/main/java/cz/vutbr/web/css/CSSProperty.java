@@ -97,19 +97,25 @@ public interface CSSProperty {
 		@SuppressWarnings("unchecked")
 		public static final <T extends CSSProperty> T valueOf(Class<T> type,
 				String value) {
-			try {
-				Method m = translators.get(type);
-				if (m == null) {
-					m = type.getMethod("valueOf", String.class);
-				}
-				return (T) m.invoke(null, value);
-			} catch (Exception e) {
-				return null;
-				/*
-				throw new IllegalArgumentException("Unable to get: " + value
-						+ " for: " + type.getName(), e);
-				*/		
-			}
+//			try {
+//				Method m = translators.get(type);
+//				if (m == null) {
+//					m = type.getMethod("valueOf", String.class);
+//					translators.put(type, m);
+//				}
+//				return (T) m.invoke(null, value);
+//			} catch (Exception e) {
+//				return null;
+//				/*
+//				throw new IllegalArgumentException("Unable to get: " + value
+//						+ " for: " + type.getName(), e);
+//				*/		
+//			}
+		  if(GenericCSSPropertyProxy.class.isAssignableFrom(type)) {
+		    return (T) GenericCSSPropertyProxy.valueOf(value);
+		  } else { 
+		    return (T) Enum.valueOf((Class)type, value);
+		  }
 		}
 		
 		/**

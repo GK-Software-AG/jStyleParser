@@ -31,6 +31,11 @@ import cz.vutbr.web.csskit.antlr.Preparator;
     public List<String> getImportPaths() {
         return gCSSTreeParser.getImportPaths();
     }
+    
+    @Override
+	public void emitErrorMessage(String msg) {
+	   gCSSTreeParser.emitErrorMessage(msg);
+	}
 }
 
 dummy returns [Object o]

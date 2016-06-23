@@ -2,7 +2,10 @@ package cz.vutbr.web.csskit.antlr;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -175,6 +178,9 @@ public class CSSParserFactory {
 	
 	private static CSSParserFactory instance;
 	
+	private boolean useCache = false;
+	private Map<String, RuleList> ruleCache;
+	
 	protected CSSParserFactory() {}
 	
 	public static CSSParserFactory getInstance() {
@@ -303,29 +309,35 @@ public class CSSParserFactory {
 	        StyleSheet sheet, Preparator preparator, URL base, List<MediaQuery> media)
 	        throws CSSException, IOException
 	{
-        DefaultCSSTreeParser parser = createTreeParser(source, network, encoding, type, preparator, base, media);
-        parse(parser, type);
-        
-        for (int i = 0; i < parser.getImportPaths().size(); i++)
-        {
-            String path = parser.getImportPaths().get(i);
-            List<MediaQuery> imedia = parser.getImportMedia().get(i);
-            
-            if (((imedia == null || imedia.isEmpty()) && CSSFactory.getAutoImportMedia().matchesEmpty()) //no media query specified
-                 || CSSFactory.getAutoImportMedia().matchesOneOf(imedia)) //or some media query matches to the autoload media spec
-            {    
-                URL url = DataURLHandler.createURL(base, path);
-                try {
-                    parseAndImport(url, network, encoding, SourceType.URL, sheet, preparator, url, imedia);
-                } catch (IOException e) {
-                    log.warn("Couldn't read imported style sheet: {}", e.getMessage());
-                }
-            }
-            else
-                log.trace("Skipping import {} (media not matching)", path);
-        }
+	      log.debug("[parseAndImport] parsing base: {}, type: {}",base,type);
+	      RuleList rules = getFromCache(base, type);
+	      if(rules == null) {
+	        DefaultCSSTreeParser parser = createTreeParser(source, network, encoding, type, preparator, base, media);
+	        parse(parser, type);
+	        
+	        for (int i = 0; i < parser.getImportPaths().size(); i++)
+	        {
+	            String path = parser.getImportPaths().get(i);
+	            List<MediaQuery> imedia = parser.getImportMedia().get(i);
+	            
+	            if (((imedia == null || imedia.isEmpty()) && CSSFactory.getAutoImportMedia().matchesEmpty()) //no media query specified
+	                 || CSSFactory.getAutoImportMedia().matchesOneOf(imedia)) //or some media query matches to the autoload media spec
+	            {    
+	                URL url = DataURLHandler.createURL(base, path);
+	                try {
+	                    parseAndImport(url, network, encoding, SourceType.URL, sheet, preparator, url, imedia);
+	                } catch (IOException e) {
+	                    log.warn("Couldn't read imported style sheet: {}", e.getMessage());
+	                }
+	            }
+	            else
+	                log.trace("Skipping import {} (media not matching)", path);
+	        }
+	        rules = parser.getRules();
+	        addToCache(base, rules, type);
+	      }
 
-	    return addRulesToStyleSheet(parser.getRules(), sheet);
+	    return addRulesToStyleSheet(rules, sheet);
 	}
 	
 	protected static StyleSheet addRulesToStyleSheet(RuleList rules, StyleSheet sheet) {
@@ -432,5 +444,40 @@ public class CSSParserFactory {
             return null;
         }
 	}
+
+	protected RuleList getFromCache(URL baseUrl, SourceType type) {
+	  if(isUseCache() && type == SourceType.URL && baseUrl != null) {
+	    return getRuleCache().get(baseUrl.toString());
+	  } else {
+	    return null;
+	  }
+	}
+	
+	protected void addToCache(URL baseUrl, RuleList rules, SourceType type) {
+    if(isUseCache() && type == SourceType.URL && baseUrl != null) {
+      getRuleCache().put(baseUrl.toString(), rules);
+    } 
+  }
+	
+  public boolean isUseCache() {
+    return useCache;
+  }
+
+  public void setUseCache(boolean useCache) {
+    this.useCache = useCache;
+  }
+  
+  public void clearCache() {
+    if(isUseCache()) {
+      getRuleCache().clear();
+    }
+  }
+
+  public Map<String, RuleList> getRuleCache() {
+    if(ruleCache==null) {
+      ruleCache = new HashMap<String, RuleList>();
+    }
+    return ruleCache;
+  }
 	
 }

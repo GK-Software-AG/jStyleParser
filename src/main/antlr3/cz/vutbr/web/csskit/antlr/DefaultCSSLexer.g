@@ -25,6 +25,11 @@ import CSSLexer;
            token = nextToken();
        return token;
     }
+    
+    @Override
+	public void emitErrorMessage(String msg) {
+	   gCSSLexer.emitErrorMessage(msg);
+	}
 }
 
 DUMMY: '@@dummy@@' ;
