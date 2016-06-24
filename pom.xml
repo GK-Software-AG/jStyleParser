@@ -44,12 +44,18 @@
 				<role>Former developer</role>
 			</roles>
 		</developer>
-    <developer>
+        <developer>
 			<name>Stefan Juschka</name>
 			<roles>
 				<role>Developer Fork</role>
 			</roles>
 		</developer>
+        <developer>
+          <name>Alexander Grzesik</name>
+          <roles>
+            <role>Developer Fork</role>
+          </roles>
+        </developer>
 	</developers>
 	<contributors>
       <contributor>

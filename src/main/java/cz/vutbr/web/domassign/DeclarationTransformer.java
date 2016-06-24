@@ -289,7 +289,7 @@ public class DeclarationTransformer {
 			Set<T> intersection, TermIdent term) {
 
 		try {
-			String name = term.getValue().replace("-", "_").toUpperCase();
+			String name = term.getValue().replace('-', '_').toUpperCase();
 			T property = CSSProperty.Translator.valueOf(type, name);
 			if (intersection != null && intersection.contains(property))
 				return property;

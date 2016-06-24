@@ -38,10 +38,9 @@ public class ElementMatcherSafeCS implements ElementMatcher
     
     public Collection<String> elementClasses(Element e) 
     {
-        if (e.hasAttribute(CLASS_ATTR))
-        {
-            String classNames = getAttribute(e, CLASS_ATTR);
-            
+        String classNames = getAttribute(e, CLASS_ATTR);
+        if (classNames!=null &&  classNames.length()>0)
+        {  
             Collection<String> list = new ArrayList<String>();
             for (String cname : classNames.split(CLASS_DELIM)) 
             {
@@ -57,23 +56,22 @@ public class ElementMatcherSafeCS implements ElementMatcher
     
     public boolean matchesClass(Element e, String className)
     {
-        if (e.hasAttribute(CLASS_ATTR))
-        {
-            final String classNames = e.getAttribute(CLASS_ATTR);
-            final int len = className.length();
-            int lastIndex = 0;
-            
-            while ((lastIndex = classNames.indexOf(className, lastIndex)) != -1) {
-                if ((lastIndex == 0 || Character.isWhitespace(classNames.charAt(lastIndex - 1))) &&
-                        (lastIndex + len == classNames.length() || Character.isWhitespace(classNames.charAt(lastIndex + len)))) {
-                    return true;
-                }
-                lastIndex += len;
+      final String classNames = e.getAttribute(CLASS_ATTR);
+      if(classNames!=null &&  classNames.length()>0) {
+        final int len = className.length();
+        int lastIndex = 0;
+        
+        while ((lastIndex = classNames.indexOf(className, lastIndex)) != -1) {
+            if ((lastIndex == 0 || Character.isWhitespace(classNames.charAt(lastIndex - 1))) &&
+                    (lastIndex + len == classNames.length() || Character.isWhitespace(classNames.charAt(lastIndex + len)))) {
+                return true;
             }
-            return false;
+            lastIndex += len;
         }
-        else
-            return false;
+        return false;
+      } else {
+        return false;
+      }
     }
 
     

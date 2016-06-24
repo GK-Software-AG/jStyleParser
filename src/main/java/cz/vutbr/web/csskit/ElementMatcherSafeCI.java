@@ -38,9 +38,9 @@ public class ElementMatcherSafeCI implements ElementMatcher
     
     public Collection<String> elementClasses(Element e) 
     {
-        if (e.hasAttribute(CLASS_ATTR))
+        String classNames = getAttribute(e, CLASS_ATTR);
+        if (classNames!=null && !classNames.isEmpty())
         {
-            String classNames = getAttribute(e, CLASS_ATTR);
             
             Collection<String> list = new ArrayList<String>();
             for (String cname : classNames.toLowerCase().split(CLASS_DELIM)) 
@@ -57,9 +57,10 @@ public class ElementMatcherSafeCI implements ElementMatcher
     
     public boolean matchesClass(Element e, String className)
     {
-        if (e.hasAttribute(CLASS_ATTR))
+        String classNames = getAttribute(e, CLASS_ATTR);
+        if (classNames!=null && !classNames.isEmpty())
         {
-            String classNames = getAttribute(e, CLASS_ATTR).toLowerCase();
+            classNames =getAttribute(e, CLASS_ATTR).toLowerCase();
             String search = className.toLowerCase();
             int len = className.length();
             int lastIndex = 0;

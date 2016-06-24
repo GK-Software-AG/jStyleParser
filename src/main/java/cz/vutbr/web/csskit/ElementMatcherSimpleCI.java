@@ -55,9 +55,10 @@ public class ElementMatcherSimpleCI implements ElementMatcher
     
     public boolean matchesClass(final Element e, final String className)
     {
-        final String classNames = e.getAttribute(CLASS_ATTR).toLowerCase();
+        String classNames = e.getAttribute(CLASS_ATTR);
         if (!classNames.isEmpty())
         {
+            classNames = classNames.toLowerCase();
             final String search = className.toLowerCase();
             final int len = className.length();
             int lastIndex = 0;
