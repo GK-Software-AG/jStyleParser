@@ -249,9 +249,7 @@ public class SingleMapNodeData implements NodeData {
     @Override
     public Collection<String> getPropertyNames()
     {
-        final List<String> keys = new ArrayList<String>();
-        keys.addAll(map.keySet());
-        return keys;
+        return map.keySet();
     }
 	
     @Override

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -141,6 +142,11 @@ public class DeclarationTransformer {
 	 * Cache of parsing methods
 	 */
 	private Map<String, Method> methods;
+	
+	/**
+   * Cache of font terms
+   */
+  private Map<String, Term<?>> fontTerms = Collections.synchronizedMap(new HashMap<String, Term<?>>());
 
 	/**
 	 * Singleton instance
@@ -2150,6 +2156,10 @@ public class DeclarationTransformer {
 			names.add("font-family");
 			types.add(FontFamily.class);
 		}
+		
+		final Set<FontFamily> allowedFamilies = EnumSet
+        .complementOf(EnumSet.of(FontFamily.INHERIT,
+            FontFamily.list_values));
 
 		@Override
 		protected boolean variant(int v, IntegerRef iteration,
@@ -2339,9 +2349,7 @@ public class DeclarationTransformer {
 		private void storeFamilyName(TermList storage, String name,
 				boolean composed) {
 
-			final Set<FontFamily> allowedFamilies = EnumSet
-					.complementOf(EnumSet.of(FontFamily.INHERIT,
-							FontFamily.list_values));
+			
 
 			if (name == null || "".equals(name) || name.length() == 0)
 				return;
@@ -2358,27 +2366,38 @@ public class DeclarationTransformer {
 			}
 			// try to find generic name
 			else {
-				FontFamily generic = genericPropertyRaw(FontFamily.class,
-						allowedFamilies, tf.createIdent(name));
-				// generic name found,
-				// store in term which value is generic font name FontFamily
-				// we have to append even operator
-				if (generic != null) {
-					Term<?> term = tf.createTerm(generic);
-					if (!storage.isEmpty())
-						term.setOperator(Operator.COMMA);
-					storage.add(term);
-				}
-				// generic name not found, store as family name
-				// we have to append even operator
-				else {
-					Term<?> term = tf.createString(name);
-					if (!storage.isEmpty())
-						term.setOperator(Operator.COMMA);
-					storage.add(term);
-				}
+			  boolean empty = storage.isEmpty();
+			  final String cacheKey = createCacheKey(name, empty);
+			  Term<?> term = fontTerms.get(cacheKey);
+			  if(term == null) {
+
+	        FontFamily generic = genericPropertyRaw(FontFamily.class,
+	            allowedFamilies, tf.createIdent(name));
+	        // generic name found,
+	        // store in term which value is generic font name FontFamily
+	        // we have to append even operator
+	        if (generic != null) {
+	          term = tf.createTerm(generic);
+	          if (!empty)
+	            term.setOperator(Operator.COMMA);	          
+	        }
+	        // generic name not found, store as family name
+	        // we have to append even operator
+	        else {
+	          term = tf.createString(name);
+	          if (!empty)
+	            term.setOperator(Operator.COMMA);  
+	        }
+	        fontTerms.put(cacheKey, term);
+			  }
+			  storage.add(term);
+			  
 			}
 		}
+
+    private String createCacheKey(String name, boolean empty) {
+      return empty?name:name + "_COMMA";
+    }
 
 	}
 
