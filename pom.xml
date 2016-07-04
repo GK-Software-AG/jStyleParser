@@ -363,6 +363,11 @@
 	</profiles>
 
 	<distributionManagement>
+    <repository>
+      <id>es.releases</id>
+      <name>Release Distribution Repository</name>
+      <url>${releaseDeploymentRepositoryUrl}</url>
+    </repository>
 		<snapshotRepository>
 			<id>ossrh</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
