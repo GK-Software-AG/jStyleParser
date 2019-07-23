@@ -1,6 +1,7 @@
 package cz.vutbr.web.csskit;
 
 import java.net.URL;
+import java.util.Locale;
 
 import cz.vutbr.web.css.Term;
 import cz.vutbr.web.css.TermAngle;
@@ -79,7 +80,7 @@ public class TermFactoryImpl implements TermFactory {
     public TermExpression createExpression(String expr) {
         return (new TermExpressionImpl()).setValue(expr);
     }
-    
+
 	public TermFunction createFunction() {
 		return new TermFunctionImpl();
 	}
@@ -87,7 +88,7 @@ public class TermFactoryImpl implements TermFactory {
     public TermIdent createIdent(String value) {
         return (TermIdent) (new TermIdentImpl()).setValue(value);
     }
-    
+
 	public TermIdent createIdent(String value, boolean dash) {
 	    if (!dash)
 	        return (TermIdent) (new TermIdentImpl()).setValue(value);
@@ -175,7 +176,7 @@ public class TermFactoryImpl implements TermFactory {
     					return (TermNumeric<Float>) (new TermTimeImpl()).setUnit(
     							unit).setValue(f);
     			}
-    
+
     		}
 	    } catch (IllegalArgumentException e) {
 	        return null;
@@ -258,7 +259,7 @@ public class TermFactoryImpl implements TermFactory {
 		    if (unit != null)
 		    {
         		// trim & lowercase
-        		value = value.trim().toLowerCase();
+        		value = value.trim().toLowerCase(Locale.ENGLISH);
         		// trim units from value
         		if (value.endsWith(unit))
         		    value = value.substring(0, value.length() - unit.length());
