@@ -12,7 +12,7 @@
 
 	<groupId>com.gk-software.oss.cssbox</groupId>
 	<artifactId>jstyleparser</artifactId>
-	<version>1.23-b10</version>
+	<version>1.23-b11-SNAPSHOT</version>
 	<name>jStyleParser</name>
 	<description>jStyleParser is a CSS parser written in Java. It has its own application interface that is designed to allow an efficient CSS processing in Java and mapping the values to the Java data types. It parses CSS 2.1 style sheets into structures that can be efficiently assigned to DOM elements. It is intended be the primary CSS parser for the CSSBox library. While handling errors, it is user agent conforming according to the CSS specification. This fork is maintained by GK Software.</description>
 	<url>http://cssbox.sourceforge.net/jstyleparser</url>
@@ -68,7 +68,7 @@
 		<url>https://github.com/GK-Software-AG/jStyleParser.git</url>
 		<connection>scm:git:https://github.com/GK-Software-AG/jStyleParser.git</connection>
 		<developerConnection>scm:git:https://github.com/GK-Software-AG/jStyleParser.git</developerConnection>
-		<tag>jstyleparser-1.23-b10</tag>
+		<tag>jstyleparser-1.23-b04</tag>
 	</scm>
 	
     <properties>
