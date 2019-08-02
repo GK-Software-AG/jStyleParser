@@ -26,9 +26,9 @@ import cz.vutbr.web.css.StyleSheet;
 
 /**
  * Handles construction of parser
- * 
+ *
  * @author kapy
- * 
+ *
  */
 public class CSSParserFactory {
 	private static final Logger log = LoggerFactory.getLogger(CSSParserFactory.class);
@@ -41,12 +41,18 @@ public class CSSParserFactory {
 		EMBEDDED,
 		URL
 	}
-	
+
 	/**
 	 * Creates input for CSSLexer
-	 * 
+	 *
 	 * @param source
-	 *            Source, either raw data (String) or URL 
+	 *            Source, either raw data (String) or URL
+	 * @param network
+	 *            the network processor
+	 * @param encoding
+	 *            the encoding of the stream
+	 * @param type
+	 *            the source type
 	 * @return Created stream
 	 * @throws IOException
 	 *             When file is not found or other IO exception occurs
@@ -62,10 +68,10 @@ public class CSSParserFactory {
 			throw new RuntimeException("Coding error");
 		}
 	}
-	
+
 	/**
 	 * Creates AST tree for CSSTreeParser
-	 * 
+	 *
 	 * @param parser
 	 *            Source parser
 	 * @return Created AST tree
@@ -112,10 +118,10 @@ public class CSSParserFactory {
 			throw new RuntimeException("Coding error");
 		}
 	}
-	
+
 	/**
 	 * Creates StyleSheet from AST tree
-	 * 
+	 *
 	 * @param parser
 	 *            Parser
 	 * @return Created StyleSheet
@@ -159,10 +165,10 @@ public class CSSParserFactory {
 			throw new RuntimeException("Coding error");
 		}
 	}
-	
+
 	/**
 	 * Creates new CSSException which encapsulates cause
-	 * 
+	 *
 	 * @param t
 	 *            Cause
 	 * @param msg
@@ -175,14 +181,14 @@ public class CSSParserFactory {
 	}
 
     //========================================================================================================================
-	
+
 	private static CSSParserFactory instance;
-	
+
 	private boolean useCache = false;
 	private Map<String, RuleList> ruleCache;
-	
+
 	protected CSSParserFactory() {}
-	
+
 	public static CSSParserFactory getInstance() {
 		if(instance == null)
 			instance = new CSSParserFactory();
@@ -191,15 +197,21 @@ public class CSSParserFactory {
 
 	/**
 	 * Parses source of given type
-	 * 
+	 *
 	 * @param source
 	 *            Source, interpretation depends on {@code type}
+	 * @param network
+	 *            the network processor
+	 * @param encoding
+	 *            the encoding of the stream
 	 * @param type
 	 *            Type of source provided
 	 * @param inline
 	 *            InlineElement
      * @param inlinePriority
      *            True when the rule should have an 'inline' (greater) priority
+	 * @param base
+	 *            the base URL
 	 * @return Created StyleSheet
 	 * @throws IOException
 	 *             When problem with input stream occurs
@@ -219,9 +231,13 @@ public class CSSParserFactory {
 
 	/**
 	 * Parses source of given type. Uses no element.
-	 * 
+	 *
 	 * @param source
 	 *            Source, interpretation depends on {@code type}
+	 * @param network
+	 *            the network processor
+	 * @param encoding
+	 *            the encoding of the stream
 	 * @param type
 	 *            Type of source provided
 	 * @param base
@@ -246,9 +262,13 @@ public class CSSParserFactory {
 	/**
 	 * Appends parsed source to passed style sheet. This style sheet must be
 	 * IMPERATIVELY parsed by this factory to guarantee proper appending
-	 * 
+	 *
 	 * @param source
 	 *            Source, interpretation depends on {@code type}
+	 * @param network
+	 *            the network processor
+	 * @param encoding
+	 *            the encoding of the stream
 	 * @param type
 	 *            Type of source provided
 	 * @param inline
@@ -257,6 +277,8 @@ public class CSSParserFactory {
 	 *            True when the rule should have an 'inline' (greater) priority
 	 * @param sheet
 	 *            StyleSheet to be modified
+	 * @param base
+	 *            the base URL
 	 * @return Modified StyleSheet
 	 * @throws IOException
 	 *             When problem with input stream occurs
@@ -275,13 +297,17 @@ public class CSSParserFactory {
 	 * Appends parsed source to passed style sheet. This style sheet must be
 	 * IMPERATIVELY parsed by this factory to guarantee proper appending. Uses
 	 * no inline element
-	 * 
+	 *
 	 * @param source
 	 *            Source, interpretation depends on {@code type}
+	 * @param network
+	 *            the network processor
+	 * @param encoding
+	 *            the encoding of the stream
 	 * @param type
 	 *            Type of source provided
 	 * @param base
-	 *            Base url
+	 *            the base URL
 	 * @param sheet
 	 *            StyleSheet to be modified
 	 * @return Modified StyleSheet
@@ -300,10 +326,32 @@ public class CSSParserFactory {
 
 		return append(source, network, encoding, type, null, false, sheet, base);
 	}
-	
+
 	/**
 	 * Parses the source using the given infrastructure and returns the resulting style sheet.
 	 * The imports are handled recursively.
+	 *
+	 * @param source
+	 *            Source, interpretation depends on {@code type}
+	 * @param network
+	 *            the network processor
+	 * @param encoding
+	 *            the encoding of the stream
+	 * @param type
+	 *            Type of source provided
+	 * @param sheet
+	 *            StyleSheet to be modified
+	 * @param preparator
+	 *            the preparator
+	 * @param base
+	 *            the base URL
+	 * @param media
+	 *            the collection of media
+	 * @return Modified StyleSheet
+	 * @throws IOException
+	 *             When problem with input stream occurs
+	 * @throws CSSException
+	 *             When unrecoverable exception during parsing occurs
 	 */
 	protected StyleSheet parseAndImport(Object source, NetworkProcessor network, String encoding, SourceType type,
 	        StyleSheet sheet, Preparator preparator, URL base, List<MediaQuery> media)
@@ -314,15 +362,15 @@ public class CSSParserFactory {
 	      if(rules == null) {
 	        DefaultCSSTreeParser parser = createTreeParser(source, network, encoding, type, preparator, base, media);
 	        parse(parser, type);
-	        
+
 	        for (int i = 0; i < parser.getImportPaths().size(); i++)
 	        {
 	            String path = parser.getImportPaths().get(i);
 	            List<MediaQuery> imedia = parser.getImportMedia().get(i);
-	            
+
 	            if (((imedia == null || imedia.isEmpty()) && CSSFactory.getAutoImportMedia().matchesEmpty()) //no media query specified
 	                 || CSSFactory.getAutoImportMedia().matchesOneOf(imedia)) //or some media query matches to the autoload media spec
-	            {    
+	            {
 	                URL url = DataURLHandler.createURL(base, path);
 	                try {
 	                    parseAndImport(url, network, encoding, SourceType.URL, sheet, preparator, url, imedia);
@@ -339,7 +387,7 @@ public class CSSParserFactory {
 
 	    return addRulesToStyleSheet(rules, sheet);
 	}
-	
+
 	protected static StyleSheet addRulesToStyleSheet(RuleList rules, StyleSheet sheet) {
 		if (rules != null)
 		{
@@ -350,7 +398,7 @@ public class CSSParserFactory {
 		}
 		return sheet;
 	}
-	
+
 	// creates the tree parser
 	private static DefaultCSSTreeParser createTreeParser(Object source, NetworkProcessor network, String encoding, SourceType type,
 			Preparator preparator, URL base, List<MediaQuery> media) throws IOException, CSSException {
@@ -364,7 +412,7 @@ public class CSSParserFactory {
 
 	// initializer lexer
 	private static CommonTokenStream feedLexer(CSSInputStream source)
-	        throws CSSException 
+	        throws CSSException
 	{
 		// we have to unpack runtime exception
 		// because of Java limitation
@@ -387,7 +435,7 @@ public class CSSParserFactory {
 
 	// Initializes parser
 	private static CommonTree feedParser(CommonTokenStream source, SourceType type)
-	        throws CSSException 
+	        throws CSSException
 	{
 		DefaultCSSParser parser = new DefaultCSSParser(source);
 		parser.init();
@@ -395,7 +443,7 @@ public class CSSParserFactory {
 	}
 
 	// initializes tree parser
-	private static DefaultCSSTreeParser feedAST(CommonTokenStream source, CommonTree ast, Preparator preparator, List<MediaQuery> media) 
+	private static DefaultCSSTreeParser feedAST(CommonTokenStream source, CommonTree ast, Preparator preparator, List<MediaQuery> media)
 	{
 		if (log.isTraceEnabled()) {
 			log.trace("Feeding tree parser with AST:\n{}", TreeUtil.toStringTree(ast));
@@ -410,7 +458,7 @@ public class CSSParserFactory {
 	}
 
     //========================================================================================================================
-	
+
 	/**
 	 * Parses a media query from a string (e.g. the 'media' HTML attribute).
 	 * @param query The query string
@@ -452,13 +500,13 @@ public class CSSParserFactory {
 	    return null;
 	  }
 	}
-	
+
 	protected void addToCache(URL baseUrl, RuleList rules, SourceType type) {
     if(isUseCache() && type == SourceType.URL && baseUrl != null) {
       getRuleCache().put(baseUrl.toString(), rules);
-    } 
+    }
   }
-	
+
   public boolean isUseCache() {
     return useCache;
   }
@@ -466,7 +514,7 @@ public class CSSParserFactory {
   public void setUseCache(boolean useCache) {
     this.useCache = useCache;
   }
-  
+
   public void clearCache() {
     if(isUseCache()) {
       getRuleCache().clear();
@@ -479,5 +527,5 @@ public class CSSParserFactory {
     }
     return ruleCache;
   }
-	
+
 }

@@ -1,33 +1,33 @@
 package cz.vutbr.web.csskit.antlr;
 
 public class CSSLexerState {
-	
+
 	public enum RecoveryMode {
 		BALANCED,
 		FUNCTION,
 		RULE,
 		DECL
 	}
-	
+
 	public short curlyNest;
 	public short parenNest;
 	public boolean quotOpen;
 	public boolean aposOpen;
-	
+
 	public CSSLexerState() {
 		this.curlyNest = 0;
 		this.parenNest = 0;
 		this.quotOpen = false;
 		this.aposOpen = false;
 	}
-	
+
 	public CSSLexerState(CSSLexerState clone) {
 		this.curlyNest = clone.curlyNest;
 		this.parenNest = clone.parenNest;
 		this.quotOpen = clone.quotOpen;
 		this.aposOpen = clone.aposOpen;
 	}
-	
+
 	@Override
 	public boolean equals(Object o)
 	{
@@ -40,15 +40,16 @@ public class CSSLexerState {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks whether all pair characters (single and double quotatation marks,
 	 * curly braces) are balanced
+	 * @return boolean answer to isBalanced
 	 */
 	public boolean isBalanced() {
 		return aposOpen==false && quotOpen==false && curlyNest==0 && parenNest==0;
 	}
-	
+
 	/**
 	 * Checks whether some pair characters are balanced. Modes are:
 	 * <ul>
@@ -60,6 +61,7 @@ public class CSSLexerState {
 	 * @param mode the desired recovery node
 	 * @param state the required lexer state (used for DECL mode)
 	 * @param t the token that is being processed (used for DECL mode)
+	 * @return boolean answer
 	 */
 	public boolean isBalanced(RecoveryMode mode, CSSLexerState state, CSSToken t)
 	{
@@ -71,7 +73,7 @@ public class CSSLexerState {
 			return aposOpen==false && quotOpen==false && parenNest==0;
 		else if (mode == RecoveryMode.DECL)
 		{
-			if (t.getType() == DefaultCSSLexer.RCURLY) //if '}' is processed the curlyNest has been already decreased 
+			if (t.getType() == DefaultCSSLexer.RCURLY) //if '}' is processed the curlyNest has been already decreased
 				return aposOpen==false && quotOpen==false && parenNest==0 && curlyNest==state.curlyNest-1;
 			else
 				return aposOpen==false && quotOpen==false && parenNest==0 && curlyNest==state.curlyNest;
@@ -79,7 +81,7 @@ public class CSSLexerState {
 		else
 			return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -87,7 +89,7 @@ public class CSSLexerState {
 			.append(", (=").append(parenNest)
 			.append(", '=").append(aposOpen ? "1" : "0")
 			.append(", \"=").append(quotOpen ? "1" :"0");
-		
+
 		return sb.toString();
 	}
 }

@@ -7,7 +7,7 @@ package cz.vutbr.web.css;
 
 /**
  * Holds the media query: the media type and a list of media expressions
- * 
+ *
  * @author burgetr
  */
 public interface MediaQuery extends Rule<MediaExpression>
@@ -15,7 +15,7 @@ public interface MediaQuery extends Rule<MediaExpression>
 
     /**
      * Sets the negative flag (i.e. the media query starts with NOT)
-     * @param negative
+     * @param negative the negative flag
      */
     public void setNegative(boolean negative);
 
@@ -27,14 +27,14 @@ public interface MediaQuery extends Rule<MediaExpression>
 
     /**
      * Sets the media type.
-     * @param type
+     * @param type the media type
      */
     public void setType(String type);
-    
+
     /**
      * Obtains the declared media type.
      * @return the declared media type or <code>null</code> when no type is declared
      */
     public String getType();
-    
+
 }

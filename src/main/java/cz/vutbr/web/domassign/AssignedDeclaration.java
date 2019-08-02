@@ -13,7 +13,7 @@ import cz.vutbr.web.csskit.DeclarationImpl;
  * @author kapy
  */
 public class AssignedDeclaration extends DeclarationImpl implements Declaration {
-	
+
 	protected CombinedSelector.Specificity spec;
 	protected StyleSheet.Origin origin;
 
@@ -21,28 +21,30 @@ public class AssignedDeclaration extends DeclarationImpl implements Declaration 
 	 * Creates assigned declaration from specificity and shallow copy of declaration
 	 * @param d Declaration to be shallow-copied
 	 * @param spec Specificity
+	 * @param origin the origin of the style sheet
 	 */
 	public AssignedDeclaration(Declaration d, CombinedSelector.Specificity spec, StyleSheet.Origin origin) {
 		super(d);
 		this.spec = spec;
 		this.origin = origin;
 	}
-	
+
 	/**
-	 * Creates assigned declaration from selector and shallow copy of declaration 
+	 * Creates assigned declaration from selector and shallow copy of declaration
 	 * @param d Declaration to be shallow-copied
 	 * @param s CombinedSelector, which's specificity is computed inside
+	 * @param origin the origin of the style sheet
 	 */
 	public AssignedDeclaration(Declaration d, CombinedSelector s, StyleSheet.Origin origin) {
 		this(d, s.computeSpecificity(), origin);
 	}
-	
+
 	@Override
 	public int compareTo(Declaration other) {
-		
+
 		if( !(other instanceof AssignedDeclaration))
 			return super.compareTo(other);
-		
+
 		AssignedDeclaration o = (AssignedDeclaration) other;
 
 		int res = getOriginOrder() - o.getOriginOrder();
@@ -79,7 +81,7 @@ public class AssignedDeclaration extends DeclarationImpl implements Declaration 
 				return 2;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -110,7 +112,7 @@ public class AssignedDeclaration extends DeclarationImpl implements Declaration 
 			return false;
 		return true;
 	}
-	
-	
-	
+
+
+
 }

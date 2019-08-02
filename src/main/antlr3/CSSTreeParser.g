@@ -19,17 +19,16 @@ options {
 	private cz.vutbr.web.css.RuleList rules;
 	private List<List<cz.vutbr.web.css.MediaQuery>> importMedia;
 	private List<String> importPaths;
-	
+
 	//prevent imports inside the style sheet
 	private boolean preventImports;
-	
+
 
   /**
    * Initializes the tree parser.
    * @param preparator The preparator to be used for creating the rules.
    * @param wrapMedia The media queries to be used for wrapping the created rules (e.g. in case
    *    of parsing and imported style sheet) or null when no wrapping is required.
-   * @return The initialized tree parser 
    */
   public void init(cz.vutbr.web.csskit.antlr.Preparator preparator, List<cz.vutbr.web.css.MediaQuery> wrapMedia) {
 		this.preparator = preparator;
@@ -39,32 +38,32 @@ options {
 		this.importPaths = new ArrayList<String>();
 		this.preventImports = false;
 		this.log = org.slf4j.LoggerFactory.getLogger(getClass());
-	}   
-  
+	}
+
   public cz.vutbr.web.css.RuleList getRules()
   {
     return rules;
   }
-  
+
   public List<List<cz.vutbr.web.css.MediaQuery>> getImportMedia()
   {
     return importMedia;
-  } 
-  
+  }
+
   public List<String> getImportPaths()
   {
     return importPaths;
   }
-  
+
   @Override
 	public void emitErrorMessage(String msg) {
 	    log.info("ANTLR: {}", msg);
 	}
-		
+
 	private String extractText(CommonTree token) {
         return token.getText();
     }
-   
+
   private String extractTextUnescaped(CommonTree token) {
         return org.unbescape.css.CssEscape.unescapeCss(token.getText());
     }
@@ -81,17 +80,17 @@ options {
       cz.vutbr.web.csskit.antlr.CSSToken ct = (cz.vutbr.web.csskit.antlr.CSSToken) token.getToken();
       return ct.getBase();
   }
-    	
+
   private cz.vutbr.web.css.Declaration.Source extractSource(CommonTree token) {
       cz.vutbr.web.csskit.antlr.CSSToken ct = (cz.vutbr.web.csskit.antlr.CSSToken) token.getToken();
       cz.vutbr.web.css.Declaration.Source src = new cz.vutbr.web.css.Declaration.Source(ct.getBase(), ct.getLine(), ct.getCharPositionInLine());
       return src;
-  }   
-		
+  }
+
     private void logEnter(String entry) {
         log.trace("Entering '{}'", entry);
     }
-    	
+
     private void logLeave(String leaving) {
 	    log.trace("Leaving '{}'", leaving);
     }
@@ -101,19 +100,19 @@ inlinestyle returns [cz.vutbr.web.css.RuleList rules]
 @init {
 	logEnter("inlinestyle");
 	$rules = this.rules = new cz.vutbr.web.csskit.RuleArrayList();
-} 
+}
 @after {
-	log.debug("\n***\n{}\n***\n", $rules);	   
+	log.debug("\n***\n{}\n***\n", $rules);
 	logLeave("inlinestyle");
 }
-	: 	^(INLINESTYLE decl=declarations) 
+	: 	^(INLINESTYLE decl=declarations)
 		{
 			cz.vutbr.web.css.RuleBlock<?> rb = preparator.prepareInlineRuleSet(decl, null);
 			if(rb!=null) {
 			     $rules.add(rb);
 			}
-		} 
-	|   ^(INLINESTYLE 
+		}
+	|   ^(INLINESTYLE
 		 	(irs=inlineset {if(irs!=null) $rules.add(irs);} )+ )
 	;
 
@@ -125,42 +124,42 @@ stylesheet returns [cz.vutbr.web.css.RuleList rules]
 @init {
 	logEnter("stylesheet");
   $rules = this.rules = new cz.vutbr.web.csskit.RuleArrayList();
-} 
+}
 @after {
 	log.debug("\n***\n{}\n***\n", $rules);
 	logLeave("stylesheet");
 }
-	: ^(STYLESHEET 
-		 (s=statement { if(s!=null) $rules.add(s);})*  
+	: ^(STYLESHEET
+		 (s=statement { if(s!=null) $rules.add(s);})*
 	   )
 	;
 
 /**
  * Statement, main contents unit
- */	
+ */
 statement returns [cz.vutbr.web.css.RuleBlock<?> stm]
 scope {
     boolean invalid;
-	
+
 	// this flag allows us to encapsulate rulesets
 	// into media when media import is used
-	boolean insideAtstatement;	 
-	
+	boolean insideAtstatement;
+
 }
 @init {
 	logEnter("statement");
 	$statement::invalid = false;
-}   
+}
 @after {
   if ($statement::invalid)
       log.debug("Statement is invalid");
 	logLeave("statement");
 }
-	: rs=ruleset {$stm=rs;} 
+	: rs=ruleset {$stm=rs;}
 	| ats=atstatement {$stm=ats;}
 	| INVALID_STATEMENT { $statement::invalid = true; }
 	;
-	
+
 
 atstatement returns [cz.vutbr.web.css.RuleBlock<?> stmnt]
 scope {
@@ -191,7 +190,7 @@ scope {
 		    importMedia.add(im);
 		    importPaths.add(iuri);
 		  }
-		  else 
+		  else
         log.debug("Ignoring import: {}", iuri);
 	  }
   | ^(PAGE
@@ -218,9 +217,9 @@ scope {
     { $stmnt = preparator.prepareRuleViewport(decl); this.preventImports = true; }
   | ^(FONTFACE decl=declarations)
     { $stmnt = preparator.prepareRuleFontFace(decl); this.preventImports = true; }
-	| ^(MEDIA (mediaList=media)? 
+	| ^(MEDIA (mediaList=media)?
 			(  rs=ruleset {
-					   if(rules==null) rules = new ArrayList<cz.vutbr.web.css.RuleSet>();				
+					   if(rules==null) rules = new ArrayList<cz.vutbr.web.css.RuleSet>();
 					   if(rs!=null) {
 						   // this cast should be safe, because when inside of @statetement, oridinal ruleset
 						   // is returned
@@ -229,9 +228,9 @@ scope {
 					   }
 					}
 			  | INVALID_STATEMENT { log.debug("Skiping invalid statement in media"); }
-			
+
 			)*
-	   )	
+	   )
 	   {
 		   $stmnt = preparator.prepareRuleMedia(rules, mediaList);
 		   this.preventImports = true;
@@ -261,14 +260,14 @@ margin returns [cz.vutbr.web.css.RuleMargin m]
 		{ $m = preparator.prepareRuleMargin(extractTextUnescaped(area).substring(1), decl); }
 	;
 
-media returns [List<cz.vutbr.web.css.MediaQuery> queries] 
+media returns [List<cz.vutbr.web.css.MediaQuery> queries]
 @init {
    logEnter("media");
    $queries = new ArrayList<cz.vutbr.web.css.MediaQuery>();
 }
 @after {
-   log.debug("Totally returned {} media queries.", $queries.size());							  
-   logLeave("media");		   
+   log.debug("Totally returned {} media queries.", $queries.size());
+   logLeave("media");
 }
 	: (q = mediaquery {
 				   $queries.add(q);
@@ -320,7 +319,7 @@ mediaterm
             else if (state == MediaQueryState.START
                       || state == MediaQueryState.TYPE
                       || state == MediaQueryState.TYPEOREXPR)
-            { 
+            {
                 $mediaquery::q.setType(m);
                 $mediaquery::state = MediaQueryState.AND;
             }
@@ -332,13 +331,13 @@ mediaterm
         }
       )
    | (e=mediaexpression {
-            if ($mediaquery::state == MediaQueryState.START 
+            if ($mediaquery::state == MediaQueryState.START
                 || $mediaquery::state == MediaQueryState.EXPR
                 || $mediaquery::state == MediaQueryState.TYPEOREXPR)
             {
                 if (e.getFeature() != null) //the expression is valid
                 {
-		                $mediaquery::q.add(e); 
+		                $mediaquery::q.add(e);
 		                $mediaquery::state = MediaQueryState.AND;
 		            }
 		            else
@@ -366,11 +365,11 @@ mediaexpression returns [cz.vutbr.web.css.MediaExpression expr]
 @after {
     logLeave("mediaquery");
 }
-    : d=declaration { 
+    : d=declaration {
           if (d != null) { //if the declaration is valid
-              $expr.setFeature(d.getProperty()); 
+              $expr.setFeature(d.getProperty());
               $expr.replaceAll(d);
-          } 
+          }
       }
     ;
 
@@ -380,20 +379,20 @@ inlineset returns [cz.vutbr.web.css.RuleBlock<?> is]
 	 List<cz.vutbr.web.css.Selector.PseudoPage> pplist = new ArrayList<cz.vutbr.web.css.Selector.PseudoPage>();
 }
 @after {
-     logLeave("inlineset");   
+     logLeave("inlineset");
 }
 	: ^(RULE (p=pseudo {pplist.add(p);})* decl=declarations)
 	  	{ $is = preparator.prepareInlineRuleSet(decl, pplist); }
 	;
-    
-    
+
+
 /**
  * The most common block in CSS file,
  * set of declarations with selector
- */  
+ */
 ruleset returns [cz.vutbr.web.css.RuleBlock<?> stmnt]
 @init {
-    logEnter("ruleset"); 
+    logEnter("ruleset");
     List<cz.vutbr.web.css.CombinedSelector> cslist = new ArrayList<cz.vutbr.web.css.CombinedSelector>();
 }
 @after {
@@ -401,26 +400,26 @@ ruleset returns [cz.vutbr.web.css.RuleBlock<?> stmnt]
         $stmnt = null;
         log.debug("Ruleset not valid, so not created");
     }
-    else {    
+    else {
 		 $stmnt = preparator.prepareRuleSet(cslist, decl, (this.wrapMedia != null && !this.wrapMedia.isEmpty()), this.wrapMedia);
-		 this.preventImports = true; 
-        }		
+		 this.preventImports = true;
+        }
     logLeave("ruleset");
-}    
-    : ^(RULE 
-        (cs=combined_selector  
+}
+    : ^(RULE
+        (cs=combined_selector
         {if(cs!=null && !cs.isEmpty() && !$statement::invalid) {
             cslist.add(cs);
             log.debug("Inserted combined selector ({}) into ruleset",  cslist.size());
-         }   
+         }
         } )*
-		decl=declarations 
+		decl=declarations
     )
-    ;  
+    ;
 
 /**
  * Multiple CSS declarations
- */ 
+ */
 declarations returns [List<cz.vutbr.web.css.Declaration> decl]
 @init {
 		  logEnter("declarations");
@@ -433,7 +432,7 @@ declarations returns [List<cz.vutbr.web.css.Declaration> decl]
 	     if(d!=null) {
             $decl.add(d);
             log.debug("Inserted declaration #{} ", $decl.size()+1);
-		 }	
+		 }
 	 })*
 	 )
 	;
@@ -446,12 +445,12 @@ declaration returns [cz.vutbr.web.css.Declaration decl]
 scope {
     cz.vutbr.web.css.Declaration d;
     boolean invalid;
-} 
+}
 @init {
     logEnter("declaration");
     $declaration::d = $decl = rf.createDeclaration();
     $declaration::invalid = false;
-} 
+}
 @after {
     if($declaration::invalid || $declaration.isEmpty()) {
         $decl=null;
@@ -460,32 +459,32 @@ scope {
     else {
         log.debug("Returning declaration: {}.", $decl);
     }
-    logLeave("declaration");    
+    logLeave("declaration");
 }
-  : ^(DECLARATION 
+  : ^(DECLARATION
 	    (important { $decl.setImportant(true); log.debug("IMPORTANT"); })?
       (INVALID_DIRECTIVE { $declaration::invalid=true; })?
-      property 
-      t=terms {$decl.replaceAll(t);}      
+      property
+      t=terms {$decl.replaceAll(t);}
      )
 	| INVALID_DECLARATION { $declaration::invalid=true;}
   ;
 
 important
     : IMPORTANT
-    ;   
+    ;
 
 /**
  * Setting property of declaration
- */  
+ */
 property
 @init {
     logEnter("property");
 }
 @after {
-	log.debug("Setting property: {}", $declaration::d.getProperty());	   
+	log.debug("Setting property: {}", $declaration::d.getProperty());
     logLeave("property");
-}    
+}
   : i = IDENT { $declaration::d.setProperty(extractTextUnescaped(i)); $declaration::d.setSource(extractSource(i)); }
   | MINUS i = IDENT { $declaration::d.setProperty("-" + extractTextUnescaped(i)); $declaration::d.setSource(extractSource(i)); }
   ;
@@ -500,7 +499,7 @@ scope {
     cz.vutbr.web.css.Term.Operator op;
     int unary;
     boolean dash;
-}   
+}
 @init {
     logEnter("terms");
     $terms::list = $tlist = new ArrayList<cz.vutbr.web.css.Term<?>>();
@@ -508,20 +507,20 @@ scope {
     $terms::op = null;
     $terms::unary = 1;
     $terms::dash = false;
-}    
+}
 @after {
-	log.debug("Totally added {} terms", $tlist.size());	   
+	log.debug("Totally added {} terms", $tlist.size());
     logLeave("terms");
 }
     : ^(VALUE term+)
     ;
-    
+
 term
 @init {
   logEnter("term");
 }
-    : valuepart 
-      {// set operator, store and create next 
+    : valuepart
+      {// set operator, store and create next
        if(!$declaration::invalid && $terms::term!=null) {
           $terms::term.setOperator($terms::op);
           $terms::list.add($terms::term);
@@ -530,11 +529,11 @@ term
           $terms::unary = 1;
           $terms::dash = false;
           $terms::term = null;
-       }    
+       }
       }
     | CURLYBLOCK { $declaration::invalid = true;}
     | ATKEYWORD { $declaration::invalid = true;}
-    ;   
+    ;
 
 valuepart
 @after{
@@ -555,14 +554,14 @@ valuepart
         // replace with color
         if(colorTerm!=null) {
             $terms::term = colorTerm;
-        }                    
+        }
     }
 }
     : (MINUS {$terms::dash=true;})? i=IDENT   {$terms::term = tf.createIdent(extractTextUnescaped(i), $terms::dash);}
     | CLASSKEYWORD {$declaration::invalid = true;}
 	  | (MINUS {$terms::unary=-1;})? n=NUMBER    {$terms::term = tf.createNumeric(extractText(n), $terms::unary);}
     | (MINUS {$terms::unary=-1;})? p=PERCENTAGE  { $terms::term = tf.createPercent(extractText(p), $terms::unary);}
-    | (MINUS {$terms::unary=-1;})? d=DIMENSION   
+    | (MINUS {$terms::unary=-1;})? d=DIMENSION
 			{String dim = extractText(d);
 				 $terms::term = tf.createDimension(dim, $terms::unary);
 			     if($terms::term==null) {
@@ -570,12 +569,12 @@ valuepart
 			         $declaration::invalid = true;
 				 }
 	    }
-    | s=string    
+    | s=string
 			{ if(s!=null) $terms::term = tf.createString(s);
 			  else $declaration::invalid=true;
 			}
     | u=URI       {$terms::term = tf.createURI(extractTextUnescaped(u), extractBase(u));}
-    | h=HASH    
+    | h=HASH
 	    {$terms::term = tf.createColor(extractText(h));
 	     if($terms::term==null)
 	         $declaration::invalid = true;
@@ -583,7 +582,7 @@ valuepart
     | UNIRANGE  {$declaration::invalid = true;}
     | INCLUDES  {$declaration::invalid = true;}
     | COLON     {$declaration::invalid = true;}
-    | COMMA     {$terms::op = cz.vutbr.web.css.Term.Operator.COMMA;}    
+    | COMMA     {$terms::op = cz.vutbr.web.css.Term.Operator.COMMA;}
     | GREATER   {$declaration::invalid = true;}
     | LESS      {$declaration::invalid = true;}
     | QUESTION  {$declaration::invalid = true;}
@@ -607,7 +606,7 @@ valuepart
           else
           {
             cz.vutbr.web.css.Term<?> term = t.get(0);
-            if (term instanceof cz.vutbr.web.css.TermString) 
+            if (term instanceof cz.vutbr.web.css.TermString)
               $terms::term = tf.createURI(((cz.vutbr.web.css.TermString) term).getValue(), extractBase(f));
             else
               $declaration::invalid = true;
@@ -627,9 +626,9 @@ valuepart
     }
     | DASHMATCH {$declaration::invalid = true;}
     | ^(PARENBLOCK any*) {$declaration::invalid = true;}
-    | ^(BRACEBLOCK any*) {$declaration::invalid = true;}    
+    | ^(BRACEBLOCK any*) {$declaration::invalid = true;}
   ;
-  
+
 /**
  * Construction of selector
  */
@@ -638,34 +637,34 @@ scope {
     boolean invalid;
 }
 @init {
-	logEnter("combined_selector");	  
+	logEnter("combined_selector");
 	$combinedSelector = (cz.vutbr.web.css.CombinedSelector) rf.createCombinedSelector().unlock();
 }
-@after {  
+@after {
     // entire ruleset is not valid when selector is not valid
     // there is no need to parse selector's when already marked as invalid
-    if($statement::invalid || $combined_selector::invalid) {        
+    if($statement::invalid || $combined_selector::invalid) {
         $combinedSelector = null;
-        if($statement::invalid) { 
+        if($statement::invalid) {
 			log.debug("Ommiting combined selector, whole statement discarded");
-		}	
-        else { 
-			log.debug("Combined selector is invalid");               
+		}
+        else {
+			log.debug("Combined selector is invalid");
         }
 		// mark whole ruleset as invalid
         $statement::invalid = true;
     }
     else {
-        log.debug("Returing combined selector: {}.", $combinedSelector); 
+        log.debug("Returing combined selector: {}.", $combinedSelector);
     }
-    logLeave("combined_selector"); 
-}    
+    logLeave("combined_selector");
+}
 	: s=selector {
 	     $combinedSelector.add(s);
 	  }
 	 (c=combinator s=selector {
 	     s.setCombinator(c);
-	     $combinedSelector.add(s);	
+	     $combinedSelector.add(s);
 	  }
 	 )*
 	;
@@ -692,20 +691,20 @@ scope {
 @after {
 	logLeave("selector");
 }
-    : ^(SELECTOR 
-        ^(ELEMENT 
+    : ^(SELECTOR
+        ^(ELEMENT
           (i=IDENT { en.setName(extractTextUnescaped(i)); }
-          )?         
+          )?
          ){
 		  log.debug("Adding element name: {}.", en.getName());
 		  $selector::s.add(en);
 		 }
          selpart*
        )
-    | ^(SELECTOR 
+    | ^(SELECTOR
          selpart+
        )
-    | INVALID_SELECTOR { $statement::invalid = true; }	   
+    | INVALID_SELECTOR { $statement::invalid = true; }
   ;
 
 selpart
@@ -731,9 +730,9 @@ selpart
         else
           $combined_selector::invalid = true;
       }
-	| INVALID_SELPART { $combined_selector::invalid = true;}  
+	| INVALID_SELPART { $combined_selector::invalid = true;}
     ;
- 
+
 attribute returns [cz.vutbr.web.css.Selector.ElementAttribute elemAttr]
 @init {
     logEnter("attribute");
@@ -753,29 +752,29 @@ attribute returns [cz.vutbr.web.css.Selector.ElementAttribute elemAttr]
     logLeave("attribute");
 }
 	: i=IDENT {attribute=extractTextUnescaped(i); }
-	  ((EQUALS {op=cz.vutbr.web.css.Selector.Operator.EQUALS; } 
-	   | INCLUDES {op=cz.vutbr.web.css.Selector.Operator.INCLUDES; } 
+	  ((EQUALS {op=cz.vutbr.web.css.Selector.Operator.EQUALS; }
+	   | INCLUDES {op=cz.vutbr.web.css.Selector.Operator.INCLUDES; }
 	   | DASHMATCH {op=cz.vutbr.web.css.Selector.Operator.DASHMATCH; }
      | CONTAINS {op=cz.vutbr.web.css.Selector.Operator.CONTAINS; }
      | STARTSWITH {op=cz.vutbr.web.css.Selector.Operator.STARTSWITH; }
      | ENDSWITH {op=cz.vutbr.web.css.Selector.Operator.ENDSWITH; }
-	   ) 
+	   )
 	   (i=IDENT {
 		value=extractTextUnescaped(i);
 		isStringValue=false;
 		}
 	   | s=string {
-		 if(s!=null)  { 
+		 if(s!=null)  {
 			value=s;
 			isStringValue=true;
-		 }	
+		 }
 		 else {
 			$combined_selector::invalid=true;
 		 }
 		}
 	   ))?
-	; 
-	
+	;
+
 pseudo returns [cz.vutbr.web.css.Selector.PseudoPage pseudoPage]
 @init {
 		logEnter("pseudo");
@@ -837,7 +836,7 @@ string returns [String s]
 	: st=STRING { $s=extractTextUnescaped(st);}
 	| INVALID_STRING {$s=null;}
 	;
-  
+
 any
   : IDENT
   | CLASSKEYWORD
@@ -855,7 +854,7 @@ any
   | EQUALS
   | SLASH
   | EXCLAMATION
-  | ^(FUNCTION any*) 
+  | ^(FUNCTION any*)
   | DASHMATCH
   | ^(PARENBLOCK any*)
   | ^(BRACEBLOCK any*)

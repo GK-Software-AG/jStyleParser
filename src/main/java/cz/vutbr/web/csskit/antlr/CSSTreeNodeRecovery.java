@@ -12,13 +12,13 @@ import org.antlr.runtime.tree.TreeAdaptor;
 import org.slf4j.Logger;
 
 public class CSSTreeNodeRecovery {
-	
+
 	private final Parser parser;
 	private final TokenStream input;
 	private final RecognizerSharedState state;
 	private final TreeAdaptor adaptor;
 	private final Logger log;
-	
+
 	public CSSTreeNodeRecovery(Parser parser,
 	                           TokenStream input,
 	                           RecognizerSharedState state,
@@ -30,19 +30,29 @@ public class CSSTreeNodeRecovery {
 		this.adaptor = adaptor;
 		this.log = log;
 	}
-	
+
 	/**
-	 * Recovers and logs error, prepares tree part replacement
+	 * * Recovers and logs error, prepares tree part replacement
+	 *
+	 * @param ttype the replacement node type
+	 * @param ttext the replacement node text
+	 * @param re the RecognitionException
+	 * @return the replacement node
 	 */
 	public Object invalidFallback(int ttype, String ttext, RecognitionException re) {
 		parser.reportError(re);
 		parser.recover(input, re);
 		return invalidReplacement(ttype, ttext);
 	}
-	
+
 	/**
 	 * Recovers and logs error, using custom follow set,
 	 * prepares tree part replacement
+	 * @param ttype the replacement node type
+	 * @param ttext the replacement node text
+	 * @param follow the follow BitSet
+	 * @param re the RecognitionException
+	 * @return the replacement node
 	 */
 	public Object invalidFallbackGreedy(int ttype, String ttext, BitSet follow, RecognitionException re) {
 		parser.reportError(re);
@@ -58,12 +68,19 @@ public class CSSTreeNodeRecovery {
 		consumeUntilGreedy(input, follow);
 		parser.endResync();
 		return invalidReplacement(ttype, ttext);
-		
+
 	}
-	
+
 	/**
 	 * Recovers and logs error inside a function, using custom follow set,
 	 * prepares tree part replacement
+	 * @param ttype the replacement node type
+	 * @param ttext the replacement node text
+	 * @param follow the follow BitSet
+	 * @param mode the recovery mode
+	 * @param ls the state of Lexer
+	 * @param re the RecognitionException
+	 * @return the replacement node
 	 */
 	public Object invalidFallback(int ttype, String ttext, BitSet follow, CSSLexerState.RecoveryMode mode, CSSLexerState ls, RecognitionException re) {
 		parser.reportError(re);
@@ -79,12 +96,19 @@ public class CSSTreeNodeRecovery {
 		consumeUntil(input, follow, mode, ls);
 		parser.endResync();
 		return invalidReplacement(ttype, ttext);
-		
+
 	}
 
 	/**
 	 * Recovers and logs error inside a function, using custom follow set,
 	 * prepares tree part replacement
+	 * @param ttype the replacement node type
+	 * @param ttext the replacement node text
+	 * @param follow the follow BitSet
+	 * @param mode the recovery mode
+	 * @param ls the state of Lexer
+	 * @param re the RecognitionException
+	 * @return the replacement node
 	 */
 	public Object invalidFallbackGreedy(int ttype, String ttext, BitSet follow, CSSLexerState.RecoveryMode mode, CSSLexerState ls, RecognitionException re) {
 		parser.reportError(re);
@@ -100,26 +124,28 @@ public class CSSTreeNodeRecovery {
 		consumeUntilGreedy(input, follow, mode, ls);
 		parser.endResync();
 		return invalidReplacement(ttype, ttext);
-		
+
 	}
-	
+
 	private Object invalidReplacement(int ttype, String ttext) {
-		
+
 		Object root = (Object) adaptor.nil();
 		Object node = (Object) adaptor.create(ttype, ttext);
-		
+
 		adaptor.addChild(root, node);
-		
+
 		if(log.isDebugEnabled()) {
 			log.debug("Invalid fallback with: {}", TreeUtil.toStringTree((CommonTree) root));
 		}
-		
+
 		return root;
 	}
-	
+
 	/**
 	 * Consumes token until lexer state is balanced and
 	 * token from follow is matched. Matched token is also consumed
+	 * @param input the token stream
+	 * @param follow the follow BitSet
 	 */
 	private void consumeUntilGreedy(TokenStream input, BitSet follow) {
 		CSSToken t = null;
@@ -134,10 +160,14 @@ public class CSSTreeNodeRecovery {
 		  input.consume();
 		}while(!(t.getLexerState().isBalanced() && follow.member(t.getType())));
 	}
-	
+
 	/**
 	 * Consumes token until lexer state is function-balanced and
 	 * token from follow is matched. Matched token is also consumed
+	 * @param input the token stream
+	 * @param follow the follow BitSet
+	 * @param mode the recovery mode
+	 * @param ls the state of Lexer
 	 */
 	private void consumeUntilGreedy(TokenStream input, BitSet follow, CSSLexerState.RecoveryMode mode, CSSLexerState ls) {
 		CSSToken t = null;
@@ -152,10 +182,14 @@ public class CSSTreeNodeRecovery {
 			input.consume();
 		}while(!(t.getLexerState().isBalanced(mode, ls, t) && follow.member(t.getType())));
 	}
-	
+
 	/**
 	 * Consumes token until lexer state is function-balanced and
 	 * token from follow is matched.
+	 * @param input the token stream
+	 * @param follow the follow BitSet
+	 * @param mode the recovery mode
+	 * @param ls the state of Lexer
 	 */
 	private void consumeUntil(TokenStream input, BitSet follow, CSSLexerState.RecoveryMode mode, CSSLexerState ls) {
 		CSSToken t = null;

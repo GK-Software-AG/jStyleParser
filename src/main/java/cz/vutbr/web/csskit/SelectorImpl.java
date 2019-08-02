@@ -542,7 +542,7 @@ public class SelectorImpl extends AbstractRule<Selector.SelectorPart> implements
          * Decodes the element index in the <code>an+b</code> form.
          * @param index the element index string
          * @return an array of two integers <code>a</code> and <code>b</code>
-         * @throws NumberFormatException
+         * @throws NumberFormatException thrown when the string cannot be parsed
          */
         protected int[] decodeIndex(String index) throws NumberFormatException
         {

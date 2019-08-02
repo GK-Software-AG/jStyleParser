@@ -5,7 +5,7 @@ import cz.vutbr.web.css.Term;
 
 /**
  * CSS Declaration
- * 
+ *
  * @author kapy
  * @author Jan Svercl, VUT Brno, 2008
  */
@@ -20,7 +20,7 @@ public class DeclarationImpl extends AbstractRule<Term<?>> implements Declaratio
 		this.important = false;
 		this.source = null;
 	}
-	
+
 	/**
 	 * Shallow copy constructor
 	 * @param clone Declaration to share term values with
@@ -34,30 +34,31 @@ public class DeclarationImpl extends AbstractRule<Term<?>> implements Declaratio
 
 	/**
 	 * This declaration type is never inherited
+	 * @param level the level
 	 * @return <code>false</code>
 	 */
 	public boolean isInherited(int level) {
 		return false;
 	}
-	
+
 	public int getInheritanceLevel() {
 		return 0;
 	}
-	
+
 	/**
 	 * This declaration type is not about to be compared
 	 * using precise conditions
 	 */
 	public int compareTo(Declaration o) {
-		
+
 		if(this.isImportant() && ! o.isImportant())
             return 1;
         else if(o.isImportant() && ! this.isImportant())
             return -1;
-		
+
 		return 0;
 	}
-	
+
     /**
 	 * @return the property
 	 */
@@ -87,7 +88,7 @@ public class DeclarationImpl extends AbstractRule<Term<?>> implements Declaratio
 	 */
 	public void setImportant(boolean important) {
 		this.important = important;
-	}	
+	}
 
 	@Override
     public Source getSource()
@@ -105,24 +106,24 @@ public class DeclarationImpl extends AbstractRule<Term<?>> implements Declaratio
 	public String toString() {
 		return this.toString(0);
 	}
-	
+
 
 	public String toString(int depth) {
-		
+
 		StringBuilder sb = new StringBuilder();
-		
+
 		// add property
 		sb = OutputUtil.appendTimes(sb, OutputUtil.DEPTH_DELIM, depth);
 		sb.append(property).append(OutputUtil.PROPERTY_OPENING);
-		
+
 		// add terms
 		sb = OutputUtil.appendList(sb, list, OutputUtil.EMPTY_DELIM);
-		
+
 		// importance flag
 		if(important) sb.append(OutputUtil.SPACE_DELIM).append(OutputUtil.IMPORTANT_KEYWORD);
-		
+
 		sb.append(OutputUtil.PROPERTY_CLOSING);
-		
+
         return sb.toString();
     }
 
@@ -160,5 +161,5 @@ public class DeclarationImpl extends AbstractRule<Term<?>> implements Declaratio
 			return false;
 		return true;
 	}
-    
+
 }

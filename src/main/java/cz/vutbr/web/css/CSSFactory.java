@@ -566,6 +566,8 @@ public final class CSSFactory {
      *            Base URL against which all files are searched
      * @param media
      *            Selected media for style sheet
+     * @param network
+     * 			  the network processor
      * @return the rules of all the style sheets used in the document including the inline styles
      */
     public static final StyleSheet getUsedStyles(Document doc, String encoding, URL base, MediaSpec media, NetworkProcessor network)

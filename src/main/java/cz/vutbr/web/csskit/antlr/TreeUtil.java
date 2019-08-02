@@ -5,7 +5,7 @@ import org.antlr.runtime.tree.CommonTree;
 /**
  * Utility class of CommonTree. Provides pretty string representation of this
  * tree
- * 
+ *
  * @author kapy
  * @see CommonTree
  */
@@ -19,6 +19,8 @@ public class TreeUtil {
 	/**
 	 * Constructs pretty indented "lisp" representation of tree which was
 	 * created by parser
+	 * @param tree the common tree
+	 * @return the "lisp" representation the tree
 	 */
 	public static String toStringTree(CommonTree tree) {
 		StringBuilder sb = new StringBuilder();

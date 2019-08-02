@@ -6,21 +6,22 @@ import org.antlr.runtime.Token;
 import org.slf4j.Logger;
 
 public class CSSExpressionReader {
-	
+
 	private final CharStream input;
 	private final Logger log;
-	
+
 	public CSSExpressionReader(CharStream input, Logger log) {
 		this.input = input;
 		this.log = log;
 	}
-	
+
 	/**
 	 * Reads all the contents of an expression. Parenthesis are matched but not in strings.
+	 * @return the read string
 	 */
 	public String read() {
 		log.debug("readExpressionContents");
-		
+
 		StringBuffer ret = new StringBuffer();
 		int parenN = 1; /* one already open */
 		boolean inApos = false;
@@ -53,15 +54,15 @@ public class CSSExpressionReader {
 				log.info("Unexpected EOF during consumeUntilBalanced, EOF not consumed");
 				return ret.toString();
 			}
-			
+
 			esc = (c == '\\') && !esc;
-			
+
 			if (!finished) ret.append((char) c);
-			
+
 			input.consume();
-			
+
 		}
-		
+
 		log.debug("Expr: " + ret.toString());
 		return ret.toString();
 	}

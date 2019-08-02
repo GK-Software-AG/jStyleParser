@@ -16,7 +16,7 @@ import cz.vutbr.web.css.TermIdent;
  * Repeats one operation on different CSS declaration duplication of code. To
  * use, implement operation() method. Use for CSS declaration such as
  * <code>border-width: 2px</code>
- * 
+ *
  * @author kapy
  */
 public abstract class Repeater {
@@ -40,10 +40,10 @@ public abstract class Repeater {
 	 * Which property is used to repeat
 	 */
 	protected Class<? extends CSSProperty> type;
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param times
 	 *            Number of iterations
 	 */
@@ -55,7 +55,7 @@ public abstract class Repeater {
 
 	/**
 	 * Repeating operation
-	 * 
+	 *
 	 * @param iteration
 	 *            Currently passing iteration
 	 * @param properties
@@ -70,7 +70,7 @@ public abstract class Repeater {
 
 	/**
 	 * Repeats operations on terms
-	 * 
+	 *
 	 * @param properties
 	 *            Properties map where to store properties types
 	 * @param values
@@ -90,14 +90,14 @@ public abstract class Repeater {
 	/**
 	 * Construct terms array to be used by repeated object from available terms
 	 * (in size 1 to 4) according to CSS rules.
-	 * 
+	 *
 	 * Example:
 	 * <p>
 	 * <code>margin: 2px 5px;</code> creates virtual terms array with terms
 	 * <code>2px 5px 2px 5px</code> so top and bottom; left and right contains
 	 * the same margin
 	 * </p>
-	 * 
+	 *
 	 * @param d
 	 *            Declaration with terms
 	 * @param properties
@@ -118,7 +118,7 @@ public abstract class Repeater {
 		case 1:
 			// one term for all value
 			Term<?> term = d.get(0);
-			
+
 			// check inherit
 			if(term instanceof TermIdent && CSSProperty.INHERIT_KEYWORD.equalsIgnoreCase(((TermIdent) term).getValue())) {
 				CSSProperty property = CSSProperty.Translator.createInherit(type);
@@ -127,7 +127,7 @@ public abstract class Repeater {
 				}
 				return true;
 			}
-			
+
 			assignTerms(term, term, term, term);
 			return repeat(properties, values);
 		case 2:
@@ -161,7 +161,7 @@ public abstract class Repeater {
 
 	/**
 	 * Assigns property names
-	 * 
+	 *
 	 * @param propertyNames
 	 *            Names of properties for each iteration
 	 * @throws IllegalArgumentException
@@ -178,7 +178,7 @@ public abstract class Repeater {
 
 	/**
 	 * Assigns terms to repeater
-	 * 
+	 *
 	 * @param terms
 	 *            Terms to be assigned
 	 * @throws IllegalArgumentException
@@ -191,11 +191,11 @@ public abstract class Repeater {
 					"Invalid length of terms in Repeater.");
 		this.terms = Arrays.asList(terms);
 	}
-	
+
     /**
      * Assigns the default values to all the properties.
-     * @param properties
-     * @param values
+     * @param properties the CSSProperty map
+     * @param values the CSSProperty terms
      */
     public void assignDefaults(Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
         SupportedCSS css = CSSFactory.getSupportedCSS();

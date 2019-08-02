@@ -230,6 +230,14 @@ public class TermFactoryImpl implements TermFactory {
 	 * HELPERS *
 	 ************************************************************************/
 
+    /**
+     *
+     * @param value the value
+     * @param unit the unit
+     * @param unary the unary
+     * @return the converted Float
+     * @throws IllegalArgumentException thrown when number has invalid format
+     */
 	protected Float convertFloat(String value, String unit, int unary)
 			throws IllegalArgumentException {
 

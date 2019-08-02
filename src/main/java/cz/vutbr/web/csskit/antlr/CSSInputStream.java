@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package cz.vutbr.web.csskit.antlr;
 
@@ -28,67 +28,67 @@ public class CSSInputStream implements CharStream {
 	/**
 	 * ANTLR input
 	 */
-	private CharStream input;	
-	
+	private CharStream input;
+
 	/**
 	 * Raw data of string passed, if any
 	 */
 	private String rawData;
-	
+
 	/**
 	 * Base location of this input stream
 	 */
 	private URL base = null;
-	
+
     /**
      * Source URL for URL streams, null for string streams
      */
     private URL url;
-    
+
     /**
      * Network processor used for obtaining data from URLs
      */
     private NetworkProcessor network;
-    
+
 	/**
 	 * Source input stream for URL streams, null for string streams
 	 */
 	private InputStream source = null;
-	
+
 	/**
 	 * Encoding of file or string. If <code>null</code>
 	 */
 	private String encoding;
-	
-	
+
+
 	public static CSSInputStream stringStream(String source) throws IOException {
 		CSSInputStream stream = new CSSInputStream();
-		
+
 		stream.rawData = source;
 		stream.encoding = Charset.defaultCharset().name();
-		
+
 		BufferedReader br = new BufferedReader(
 				new InputStreamReader(new ByteArrayInputStream(source.getBytes()), stream.encoding));
 		stream.input = new ANTLRReaderStream(br);
-		
+
 		return stream;
 	}
-	
+
 	public static CSSInputStream urlStream(URL source, NetworkProcessor network, String encoding) throws IOException {
 		CSSInputStream stream = new CSSInputStream();
-		
+
 		stream.base = source;
 		if (encoding != null)
             stream.encoding = encoding;
 		else
             stream.encoding = Charset.defaultCharset().name();
-		
+
         InputStream is = network.fetch(source);
         stream.input = new ANTLRInputStream(is, stream.encoding);
         stream.source = is;
         stream.url = source;
         stream.network = network;
-		
+
 		return stream;
 	}
 
@@ -96,7 +96,7 @@ public class CSSInputStream implements CharStream {
 	// force using factory methods
 	private CSSInputStream() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.antlr.runtime.CharStream#LT(int)
 	 */
@@ -152,7 +152,7 @@ public class CSSInputStream implements CharStream {
 	public void consume() {
 		input.consume();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.antlr.runtime.IntStream#index()
 	 */
@@ -201,14 +201,14 @@ public class CSSInputStream implements CharStream {
 	public int size() {
 		return input.size();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.antlr.runtime.CharStream#getSourceName()
 	 */
 	public String getSourceName() {
 		return base!=null ? base.toString() : "";
-	}	
-	
+	}
+
 	/**
 	 * Obtains the current base URL used for locating the eventual imported style sheets.
 	 * @return The base URL.
@@ -216,7 +216,7 @@ public class CSSInputStream implements CharStream {
 	public URL getBase() {
 		return base;
 	}
-	
+
 	/**
 	 * Sets the base URL used for locating the eventual imported style sheets.
 	 * @param base The new base URL.
@@ -224,7 +224,7 @@ public class CSSInputStream implements CharStream {
 	public void setBase(URL base) {
 	    this.base = base;
 	}
-	
+
 	/**
 	 * Obtains current character encoding used for processing the style sheets.
 	 * @return The charset name.
@@ -233,12 +233,12 @@ public class CSSInputStream implements CharStream {
 	{
 	    return encoding;
 	}
-	
+
 	/**
 	 * Sets a new encoding for the input stream. <b>Warning:</b> this resets the stream
 	 * i.e. a new connection is opened and all the data is read again.
 	 * @param enc The new encoding name.
-	 * @throws IOException
+	 * @throws IOException thrown IOException
 	 */
 	public void setEncoding(String enc) throws IOException
 	{
@@ -256,14 +256,14 @@ public class CSSInputStream implements CharStream {
     	    }
 	    }
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return the raw data
 	 */
 	public String getRawData() {
 		return rawData;
 	}
-	
-	
+
+
 }

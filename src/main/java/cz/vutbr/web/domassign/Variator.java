@@ -16,9 +16,9 @@ import cz.vutbr.web.css.TermIdent;
  * Selects appropriate variant when parsing content of CSS declaration. Allows
  * easy parsing of CSS declaration multi-values such as
  * <code>border: blue 1px</code>
- * 
+ *
  * @author kapy
- * 
+ *
  */
 public abstract class Variator {
 
@@ -54,8 +54,8 @@ public abstract class Variator {
 	/**
 	 * Creates variator which contains <code>variants</code> variants to be
 	 * tested
-	 * 
-	 * @param variants
+	 *
+	 * @param variants the variants available
 	 */
 	public Variator(int variants) {
 		this.variants = variants;
@@ -68,12 +68,12 @@ public abstract class Variator {
 
 	/**
 	 * This function contains parsing block for variants
-	 * 
+	 *
 	 * @param variant
 	 *            Tested variant
 	 * @param iteration
 	 *            Number of iteration, that is term to be tested.
-	 *            This number may be changed internally in function 
+	 *            This number may be changed internally in function
 	 *            to inform that more than one term was used for variant
 	 * @param properties
 	 *            Properties map where to store properties types
@@ -89,10 +89,10 @@ public abstract class Variator {
 	 * Solves variant which leads to <code>inherit</code> CSS Property value.
 	 * This overrides all other possible variants and no other informations are
 	 * allowed per CSS Declaration.
-	 * 
+	 *
 	 * This method is called before check for variants or before variant itself
 	 * is called in one shot way.
-	 * 
+	 *
 	 * Example: <code>margin: inherit</code> is valid value and leads to setting
 	 * of
 	 * <ul>
@@ -101,9 +101,9 @@ public abstract class Variator {
 	 * <li><code>margin-bottom: inherit</code></li>
 	 * <li><code>margin-left: inherit</code></li>
 	 * </ul>
-	 * 
+	 *
 	 * <code>margin: 0px inherit</code> is invalid value.
-	 * 
+	 *
 	 * @param variant
 	 *            Number of variant or identifier of all variants
 	 *            <code>VARIANT_ALL</code>
@@ -138,7 +138,7 @@ public abstract class Variator {
 
 	/**
 	 * Creates INHERIT value of given class
-	 * 
+	 *
 	 * @param i
 	 *            Ordinal in list of types
 	 * @return Created CSSProperty with value inherit
@@ -164,33 +164,33 @@ public abstract class Variator {
 	}
 
 /**
-	 * Check if variant, which was passed is able to be located in place where it was 
+	 * Check if variant, which was passed is able to be located in place where it was
 	 * found.
-	 * 
+	 *
 	 * Example:
 	 * We have declaration:
 	 * <code>font: 12px/14px sans-serif</code>
 	 * Then according to grammar:
 	 * <pre>
-	 * 	[ 
-	 * 		[ &lt;'font-style'&gt; || &lt;'font-variant'&gt; || &lt;'font-weight'&gt; ]? 
-	 * 		&lt;'font-size'&gt; 
-	 * 		[ / &lt;'line-height'&gt; ]? 
-	 * 		&lt;'font-family'&gt; 
-	 *  ] 
-	 *  | caption | icon | menu | message-box | 
+	 * 	[
+	 * 		[ &lt;'font-style'&gt; || &lt;'font-variant'&gt; || &lt;'font-weight'&gt; ]?
+	 * 		&lt;'font-size'&gt;
+	 * 		[ / &lt;'line-height'&gt; ]?
+	 * 		&lt;'font-family'&gt;
+	 *  ]
+	 *  | caption | icon | menu | message-box |
 	 *  small-caption | status-bar | inherit
-	 * </pre> 
+	 * </pre>
 	 * <ol>
 	 * <li><code>12px</code> is assigned to <i>font-size</i></li>
-	 * <li><code>14px</code> is checked to have SLASH operator before 
+	 * <li><code>14px</code> is checked to have SLASH operator before
 	 * and check to whether <i>font-size</i> was defined before it</li>
-	 * <li><code>sans-serif</code> is tested to have at least 
+	 * <li><code>sans-serif</code> is tested to have at least
 	 * definition of <i>font-size</i> before itself</li>
 	 * <li>declaration passes</li>
 	 * </ol>
-	 *   	  
-	 * @param variant Identification of current variant which passed test 
+	 *
+	 * @param variant Identification of current variant which passed test
 	 * @param term Position in term list of terms which passed test, for multiple
 	 * value term allow to change it
 	 * @return <code>true</code> in case of success, <code>false</code> elsewhere
@@ -202,7 +202,9 @@ public abstract class Variator {
 
 	/**
 	 * Test all terms
-	 * 
+	 * @param properties the CSSPropery map
+	 * @param values the CSSProperty terms
+	 * @return whether terms have passed
 	 */
 	public boolean vary(Map<String, CSSProperty> properties,
 			Map<String, Term<?>> values) {
@@ -249,7 +251,7 @@ public abstract class Variator {
 
 	/**
 	 * Uses variator functionality to test selected variant on term
-	 * 
+	 *
 	 * @param variant
 	 *            Which variant will be tested
 	 * @param d
@@ -283,7 +285,7 @@ public abstract class Variator {
 	 * is used when variant is represented by more terms. Since usually only one
 	 * term per variant is used, only one multiple variant is allowed per
 	 * variator and should be placed as the last one
-	 * 
+	 *
 	 * @param variant
 	 *            Number of variant (last variant in variator)
 	 * @param properties
@@ -311,7 +313,7 @@ public abstract class Variator {
 
 	/**
 	 * Assigns property names for each variant
-	 * 
+	 *
 	 * @param variantPropertyNames
 	 *            List of property names
 	 */
@@ -321,7 +323,7 @@ public abstract class Variator {
 
 	/**
 	 * Assigns terms to be checked by variator
-	 * 
+	 *
 	 * @param terms
 	 *            Terms to be assigned
 	 */
@@ -331,19 +333,21 @@ public abstract class Variator {
 
 	/**
 	 * Assigns terms from declaration
-	 * 
+	 *
 	 * @param d
 	 *            Declaration which contains terms
 	 */
 	public void assignTermsFromDeclaration(Declaration d) {
 		this.terms = d.asList();
 	}
-	
-	
+
+
 	/**
 	 * Assigns the default values to all the properties.
 	 * @param properties
+	 *            Properties map where to store property type
 	 * @param values
+	 *            Values map where to store property value
 	 */
 	public void assignDefaults(Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
 	    SupportedCSS css = CSSFactory.getSupportedCSS();
@@ -356,16 +360,16 @@ public abstract class Variator {
 	            values.put(name, dv);
 	    }
 	}
-	
+
 	/**
 	 * Reference to integer
 	 * @author kapy
 	 *
 	 */
 	protected static class IntegerRef {
-		
+
 		private int i;
-		
+
 		public IntegerRef(int i) {
 			this.i = i;
 		}
@@ -383,10 +387,10 @@ public abstract class Variator {
 		public void set(int i) {
 			this.i = i;
 		}
-		
+
 		public void inc() {
 			this.i++;
 		}
-		
+
 	}
 }

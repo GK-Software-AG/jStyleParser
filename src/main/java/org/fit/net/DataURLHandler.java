@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.fit.net;
 
@@ -20,29 +20,29 @@ import cz.vutbr.web.css.CSSFactory;
  * URL handler for the data: URI scheme.
  * @author burgetr
  */
-public class DataURLHandler extends URLStreamHandler 
+public class DataURLHandler extends URLStreamHandler
 {
     private static final Logger log = LoggerFactory.getLogger(CSSFactory.class);
 
     protected String mime = "text/plain";
     protected String charset = "US-ASCII";
     protected boolean encoded = false;
-    
 
-    public DataURLHandler() 
+
+    public DataURLHandler()
     {
         super();
     }
 
     @Override
-    protected URLConnection openConnection(URL u) throws IOException 
+    protected URLConnection openConnection(URL u) throws IOException
     {
         if ("data".equals(u.getProtocol()))
         {
             String path = u.getPath();
             if (path == null || path.isEmpty())
                 throw new IOException("No data specified");
-            
+
             String data;
             String[] parts = path.split(",", 2);
             if (parts.length == 2)
@@ -63,7 +63,7 @@ public class DataURLHandler extends URLStreamHandler
             {
                 data = parts[0];
             }
-            
+
             byte[] bytes;
             if (!encoded)
                 bytes = URLDecoder.decode(data, charset).getBytes(charset);
@@ -73,19 +73,19 @@ public class DataURLHandler extends URLStreamHandler
                 } catch (Exception e) {
                     throw new IOException("Couldn't decode base64 data", e);
                 }
-            
+
             return new DataURLConnection(u, mime, charset, bytes);
         }
         else
             throw new IOException("Only the 'data' protocol is supported by this URL handler");
     }
-    
+
     /**
      * Creates an URL from string while considering the data: scheme.
      * @param base the base URL used for relative URLs
      * @param urlstring the URL string
      * @return resulting URL
-     * @throws MalformedURLException
+     * @throws MalformedURLException thrown when a malformed URL has occurred
      */
     public static URL createURL(URL base, String urlstring) throws MalformedURLException
     {
@@ -113,6 +113,6 @@ public class DataURLHandler extends URLStreamHandler
             return ret;
         }
     }
-    
+
 }
 

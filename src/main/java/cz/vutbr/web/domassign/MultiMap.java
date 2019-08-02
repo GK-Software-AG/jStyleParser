@@ -11,10 +11,10 @@ import java.util.Set;
 
 /**
  * This is a general map that assigns the data D to two keys E (Element) and P (Pseudo element).
- * The element is mandatory, the PseudoElement key value may be null. When P is null, the structure 
+ * The element is mandatory, the PseudoElement key value may be null. When P is null, the structure
  * behaves as a simple map called a main map. Other values of PseudoElement create so-called pseudo
  * maps. The map is optimized to provide the best performance for the main map.
- * 
+ *
  * @author burgetr
  */
 public abstract class MultiMap<E, P, D>
@@ -30,22 +30,24 @@ public abstract class MultiMap<E, P, D>
         mainMap = new HashMap<E, D>();
         pseudoMaps = new HashMap<E, HashMap<P, D>>();
     }
-    
+
     /**
      * Creates an empty map
+     * @param initialSize the initial size of the Map
      */
     public MultiMap(int initialSize)
     {
         mainMap = new HashMap<E, D>(initialSize);
         pseudoMaps = new HashMap<E, HashMap<P, D>>();
     }
-    
+
     /**
      * Creates a new instance of the data value.
      * This is only used by {@link MultiMap#getOrCreate(Object, Object)}.
+     * @return the data value instance
      */
     protected abstract D createDataInstance();
-    
+
     /**
      * Obtains the size of the main map (where P is null)
      * @return the number of elements in the main map.
@@ -54,7 +56,7 @@ public abstract class MultiMap<E, P, D>
     {
         return mainMap.size();
     }
-    
+
     /**
      * Gets the data for the given element and pseudo-element.
      * @param el the element
@@ -76,7 +78,7 @@ public abstract class MultiMap<E, P, D>
         }
         return ret;
     }
-    
+
     /**
      * Gets the data for the given element and no pseudo-element
      * @param el the element
@@ -86,7 +88,7 @@ public abstract class MultiMap<E, P, D>
     {
         return mainMap.get(el);
     }
-    
+
     /**
      * Gets the data or creates an empty list if it does not exist yet.
      * @param el the element
@@ -122,9 +124,9 @@ public abstract class MultiMap<E, P, D>
         }
         return ret;
     }
-    
-    
-    
+
+
+
     /**
      * Sets the data for the specified element and pseudo-element.
      * @param el the element to which the data belongs
@@ -146,7 +148,7 @@ public abstract class MultiMap<E, P, D>
             map.put(pseudo, data);
         }
     }
-    
+
     /**
      * Gets all the keys (elements) of the main map.
      * @return A set of elements contained in the map.
@@ -155,8 +157,8 @@ public abstract class MultiMap<E, P, D>
     {
     	return mainMap.keySet();
     }
-    
-    
+
+
     /**
      * Gets all the pseudo elements that are available for the given element.
      * @param el The given element
@@ -170,7 +172,7 @@ public abstract class MultiMap<E, P, D>
         else
             return map.keySet();
     }
-    
+
     /**
      * Checks if the given pseudo element is available for the given element
      * @param el The element
@@ -185,5 +187,5 @@ public abstract class MultiMap<E, P, D>
         else
             return map.containsKey(pseudo);
     }
-    
+
 }

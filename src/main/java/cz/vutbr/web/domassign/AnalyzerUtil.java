@@ -33,7 +33,7 @@ import cz.vutbr.web.domassign.Analyzer.OrderedRule;
 
 /**
  * A pure (state-less) Analyser.
- * 
+ *
  * Can be used by clients that need more control over what computation is cached.
  *
  */
@@ -43,11 +43,11 @@ public final class AnalyzerUtil {
 
     /**
      * Returns all applicable rules for an element
-     * 
-     * @param sheets
-     * @param element
-     * @param mediaspec
-     * @return
+     *
+     * @param sheets the list of style sheets
+     * @param element the element
+     * @param mediaspec the mediaspec
+     * @return all applicable rules for an element
      */
     public static OrderedRule[] getApplicableRules(final List<StyleSheet> sheets, final Element element, final MediaSpec mediaspec) {
 	    final Holder rules = getClassifiedRules(sheets, mediaspec);
@@ -88,7 +88,7 @@ public final class AnalyzerUtil {
                 candidates.addAll(idRules);
         }
         // log.trace("After IDs {} total candidates.", candidates.size());
-        
+
         // match elements
         final String name = CSSFactory.getElementMatcher().elementName(e);
         if (name != null) {
@@ -130,10 +130,10 @@ public final class AnalyzerUtil {
 		final NodeData main = CSSFactory.createNodeData();
         for (final Declaration d : decls)
             main.push(d);
-        
+
         return main;
 	}
-    
+
 	/**
 	 * Classifies the rules in all the style sheets.
 	 * @param mediaspec The specification of the media for evaluating the media queries.
@@ -144,7 +144,7 @@ public final class AnalyzerUtil {
 	    for (final StyleSheet sheet : sheets)
 	        classifyRules(sheet, mediaspec, rules, orderCounter);
 	}
-	
+
 	static boolean elementSelectorMatches(final Selector s, final Element e, final ElementMatcher matcher, final MatchCondition matchCond) {
 		return s.matches(e, matcher, matchCond);
 	}
@@ -156,28 +156,28 @@ public final class AnalyzerUtil {
             return false;
         }
     }
-    
+
 	static List<Declaration> computeDeclarations(final Element e, final PseudoDeclaration pseudo, final OrderedRule[] clist, final ElementMatcher matcher, final MatchCondition matchCond) {
 		// resulting list of declaration for this element with no pseudo-selectors (main list)(local cache)
         final List<Declaration> eldecl = new ArrayList<Declaration>();
-        
+
         // for all candidates
         for (final OrderedRule orule : clist) {
-            
+
             final RuleSet rule = orule.getRule();
             final StyleSheet sheet = rule.getStyleSheet();
             final StyleSheet.Origin origin = (sheet == null) ? StyleSheet.Origin.AGENT : sheet.getOrigin();
-            
+
             // for all selectors inside
             for (final CombinedSelector s : rule.getSelectors()) {
-                
+
                 if (!AnalyzerUtil.matchSelector(s, e, matcher, matchCond)) {
                     log.trace("CombinedSelector \"{}\" NOT matched!", s);
                     continue;
                 }
 
                 log.trace("CombinedSelector \"{}\" matched", s);
-                
+
                 final PseudoDeclaration psel = s.getPseudoElement();
                 final CombinedSelector.Specificity spec = s.computeSpecificity();
                 if (psel == pseudo)
@@ -193,10 +193,10 @@ public final class AnalyzerUtil {
         Collections.sort(eldecl); //sort the main list
         log.debug("Sorted {} declarations.", eldecl.size());
         log.trace("With values: {}", eldecl);
-        
+
         return eldecl;
 	}
-    
+
     public static boolean hasPseudoSelector(final OrderedRule[] rules, final Element e, final MatchCondition matchCond, PseudoDeclaration pd)
     {
 		for (final OrderedRule rule : rules) {
@@ -243,7 +243,7 @@ public final class AnalyzerUtil {
                 retval = false;
                 if (adjacent != null && adjacent.getNodeType() == Node.ELEMENT_NODE)
                 {
-                    current = (Element) adjacent; 
+                    current = (Element) adjacent;
                     retval = elementSelectorMatches(s, current, matcher, matchCond);
                 }
             } else if (combinator == Selector.Combinator.PRECEDING) {
@@ -324,7 +324,7 @@ public final class AnalyzerUtil {
                 retval = false;
                 if (adjacent != null && adjacent.getNodeType() == Node.ELEMENT_NODE)
                 {
-                    current = (Element) adjacent; 
+                    current = (Element) adjacent;
                     retval = elementSelectorMatches(s, current, matcher, matchCond);
                 }
             } else if (combinator == Selector.Combinator.PRECEDING) {
@@ -378,10 +378,10 @@ public final class AnalyzerUtil {
         }
         return retval;
     }
-    
+
 	/**
 	 * Classify CSS rule according its selector for to be of specified item(s)
-	 * 
+	 *
 	 * @param selector
 	 *            CombinedSelector of rules
 	 * @return List of HolderSelectors to which selectors conforms
@@ -445,10 +445,10 @@ public final class AnalyzerUtil {
 	/**
 	 * Divides rules in sheet into different categories to be easily and more
 	 * quickly parsed afterward
-	 * 
+	 *
 	 * @param sheet The style sheet to be classified
      * @param mediaspec The specification of the media for evaluating the media queries.
-	 * @param orderCounter 
+	 * @param orderCounter
 	 */
 	private static void classifyRules(final StyleSheet sheet, final MediaSpec mediaspec, final Holder rules, final Counter orderCounter) {
 
@@ -477,7 +477,7 @@ public final class AnalyzerUtil {
                         }
     				}
                 }
-				
+
                 if (mediaValid)
                 {
     				// for all rules in media set

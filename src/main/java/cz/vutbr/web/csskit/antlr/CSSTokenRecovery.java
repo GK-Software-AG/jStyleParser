@@ -111,6 +111,7 @@ public class CSSTokenRecovery {
     /**
      * Implements Lexer's next token with extra token passing from
      * recovery function
+     * @return the next token
      */
     public Token nextToken() {
         while (true) {
@@ -159,6 +160,7 @@ public class CSSTokenRecovery {
     /**
      * Recovers from unexpected EOF by preparing
      * new token
+     * @return the new css token
      */
     public CSSToken generateEOFRecover() {
 

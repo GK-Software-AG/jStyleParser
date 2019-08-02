@@ -10,7 +10,7 @@ package cz.vutbr.web.css;
  * regardless on the remaining media features. This specification <b>should be used with care</b> because
  * it matches even the disjunct queries. E.g. when used for {@code screen} media, it matches
  * both {@code screen AND (min-width: 1000px)} and {@code screen AND (max-width: 999px)}.
- * 
+ *
  * @author burgetr
  */
 public class MediaSpecType extends MediaSpec
@@ -18,7 +18,7 @@ public class MediaSpecType extends MediaSpec
 
     /**
      * Creates a new media specification that matches all media queries with the given media type.
-     * @param type
+     * @param type the media type
      */
     public MediaSpecType(String type)
     {
@@ -36,5 +36,5 @@ public class MediaSpecType extends MediaSpec
     {
         return type + "[*]";
     }
-    
+
 }

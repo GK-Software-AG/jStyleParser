@@ -111,9 +111,9 @@ import cz.vutbr.web.css.Term.Operator;
 /**
  * Contains methods to transform declaration into values applicable to NodeData.
  * Uses defaults defined by CSSFactory
- * 
+ *
  * @author kapy
- * 
+ *
  */
 public class DeclarationTransformer {
 
@@ -121,7 +121,7 @@ public class DeclarationTransformer {
 			.getLogger(DeclarationTransformer.class);
 
 	/**
-	 * A hint about the allowed value range when processing numeric values. 
+	 * A hint about the allowed value range when processing numeric values.
 	 */
 	private enum ValueRange {
 	    /** Allow all values */
@@ -131,7 +131,7 @@ public class DeclarationTransformer {
 	    /** Truncate negative values to zero */
 	    TRUNCATE_NEGATIVE
 	}
-	
+
 	/**
 	 * Inherit acceptance flags
 	 */
@@ -142,7 +142,7 @@ public class DeclarationTransformer {
 	 * Cache of parsing methods
 	 */
 	private Map<String, Method> methods;
-	
+
 	/**
    * Cache of font terms
    */
@@ -162,7 +162,7 @@ public class DeclarationTransformer {
 
 	/**
 	 * Returns instance
-	 * 
+	 *
 	 * @return Singleton instance
 	 */
 	public static final DeclarationTransformer getInstance() {
@@ -172,7 +172,7 @@ public class DeclarationTransformer {
 	/**
 	 * Converts string divided by dash ('-') characters into camelCase such as
 	 * convenient for Java method names
-	 * 
+	 *
 	 * @param string
 	 *            String to convert
 	 * @return CamelCase version of string
@@ -201,7 +201,7 @@ public class DeclarationTransformer {
 	/**
 	 * Core function. Parses CSS declaration into structure applicable to
 	 * DataNodeImpl
-	 * 
+	 *
 	 * @param d
 	 *            Declaration
 	 * @param properties
@@ -232,8 +232,8 @@ public class DeclarationTransformer {
 			{
 			    boolean result = processAdditionalCSSGenericProperty(d, properties, values);
 			    log.debug("Parsing with proxy /{}/ {}", result, d);
-			    return result; 
-			}			
+			    return result;
+			}
 		} catch (IllegalArgumentException e) {
 			log.warn("Illegal argument", e);
 		} catch (IllegalAccessException e) {
@@ -279,7 +279,7 @@ public class DeclarationTransformer {
 	/**
 	 * Converts TermIdent into CSSProperty using intersection set.
 	 * CSSProperty.Translator is used.
-	 * 
+	 *
 	 * @param <T>
 	 *            Subclass of CSSProperty to be returned
 	 * @param type
@@ -308,7 +308,7 @@ public class DeclarationTransformer {
 	/**
 	 * Converts TermIdent into value of enum of given class and stores it into
 	 * properties map under key property
-	 * 
+	 *
 	 * @param <T>
 	 *            Enum &amp; CSSProperty limitation
 	 * @param type
@@ -338,7 +338,13 @@ public class DeclarationTransformer {
 
 	/**
 	 * Converts TermIdent into value of CSSProperty for given class
-	 * 
+	 * @param <T> This is the type parameter
+	 * @param type the type
+	 * @param term the Term
+	 * @param avoidInherit flag that indicates whether inheriting should be avoided
+	 * @param propertyName the property name
+	 * @param properties the collection of properties
+	 * @return the css property value
 	 */
 	protected <T extends CSSProperty> boolean genericTermIdent(Class<T> type,
 			Term<?> term, boolean avoidInherit, String propertyName,
@@ -353,7 +359,7 @@ public class DeclarationTransformer {
 
 	/**
 	 * Converts term into Color and stored values and types in maps
-	 * 
+	 *
 	 * @param <T>
 	 *            CSSProperty
 	 * @param term
@@ -385,7 +391,7 @@ public class DeclarationTransformer {
 
 	/**
 	 * Converts term into TermLength and stores values and types in maps
-	 * 
+	 *
 	 * @param <T>
 	 *            CSSProperty
 	 * @param term
@@ -394,6 +400,8 @@ public class DeclarationTransformer {
 	 *            How to store colorIdentificiton
 	 * @param lengthIdentification
 	 *            What to store under propertyName
+	 * @param range
+	 *            the range of die processed values
 	 * @param properties
 	 *            Map to store property types
 	 * @param values
@@ -414,8 +422,8 @@ public class DeclarationTransformer {
                 return false;
             }
         }
-        else if (term instanceof TermLength) { 
-            return genericTerm(TermLength.class, term, propertyName, lengthIdentification, range, properties, values); 
+        else if (term instanceof TermLength) {
+            return genericTerm(TermLength.class, term, propertyName, lengthIdentification, range, properties, values);
         }
 
         return false;
@@ -425,7 +433,7 @@ public class DeclarationTransformer {
 	/**
 	 * Check whether given declaration contains one term of given type. It is
 	 * able to check even whether is above zero for numeric values
-	 * 
+	 *
 	 * @param <T>
 	 *            Class of CSSProperty to be used for result
 	 * @param termType
@@ -437,8 +445,8 @@ public class DeclarationTransformer {
 	 *            Name under which property's value and type is stored in maps
 	 * @param typeIdentification
 	 *            How this type of term is described in type T
-	 * @param sanify
-	 *            Check if value is positive
+	 * @param range
+	 *            range of the processed values
 	 * @param properties
 	 *            Where to store property type
 	 * @param values
@@ -494,7 +502,7 @@ public class DeclarationTransformer {
 	/**
 	 * Processes declaration which is supposed to contain one identification
 	 * term
-	 * 
+	 *
 	 * @param <T>
 	 *            Type of CSSProperty
 	 * @param type
@@ -519,7 +527,7 @@ public class DeclarationTransformer {
 	/**
 	 * Processes declaration which is supposed to contain one identification
 	 * term or one TermColor
-	 * 
+	 *
 	 * @param <T>
 	 *            Type of CSSProperty
 	 * @param type
@@ -532,6 +540,7 @@ public class DeclarationTransformer {
 	 * @param properties
 	 *            Properties map where to store enum
 	 * @param values
+	 *            Terms of CSSProperty
 	 * @return <code>true</code> in case of success, <code>false</code>
 	 *         elsewhere
 	 */
@@ -576,7 +585,7 @@ public class DeclarationTransformer {
                 || genericTerm(TermNumber.class, d.get(0), d.getProperty(),
                         numberIdentification, range, properties, values);
     }
-    
+
 	protected <T extends CSSProperty> boolean genericOneIdentOrLength(
 			Class<T> type, T lengthIdentification, ValueRange range,
 			Declaration d, Map<String, CSSProperty> properties,
@@ -598,7 +607,7 @@ public class DeclarationTransformer {
 
         if (d.size() != 1)
             return false;
-        
+
         Term<?> term = d.get(0);
         if (term instanceof TermIdent)
         {
@@ -618,7 +627,7 @@ public class DeclarationTransformer {
                     || genericTermLength(term, d.getProperty(), lengthIdentification, range, properties, values);
         }
     }
-    
+
 	protected <T extends Enum<T> & CSSProperty> boolean genericOneIdentOrLengthOrPercent(
 			Class<T> type, T lengthIdentification, T percentIdentification,
 			ValueRange range, Declaration d, Map<String, CSSProperty> properties,
@@ -972,37 +981,37 @@ public class DeclarationTransformer {
         return genericTwoIdentsOrLengthsOrPercents(BorderRadius.class,
                 BorderRadius.list_values, ValueRange.DISALLOW_NEGATIVE, d, properties, values);
     }
-	
+
     @SuppressWarnings("unused")
     private boolean processBorderTopRightRadius(Declaration d,
             Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
         return genericTwoIdentsOrLengthsOrPercents(BorderRadius.class,
                 BorderRadius.list_values, ValueRange.DISALLOW_NEGATIVE, d, properties, values);
     }
-    
+
     @SuppressWarnings("unused")
     private boolean processBorderBottomRightRadius(Declaration d,
             Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
         return genericTwoIdentsOrLengthsOrPercents(BorderRadius.class,
                 BorderRadius.list_values, ValueRange.DISALLOW_NEGATIVE, d, properties, values);
     }
-    
+
     @SuppressWarnings("unused")
     private boolean processBorderBottomLeftRadius(Declaration d,
             Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
         return genericTwoIdentsOrLengthsOrPercents(BorderRadius.class,
                 BorderRadius.list_values, ValueRange.DISALLOW_NEGATIVE, d, properties, values);
     }
-    
+
     @SuppressWarnings("unused")
     private boolean processBorderRadius(Declaration d,
             Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
         BorderRadiusRepeater radius = new BorderRadiusRepeater();
         return radius.repeatOverMultiTermDeclaration(d, properties, values);
     }
-	
+
 	/*
-	 * 
+	 *
 	 * private Boolean processBorder(Declaration d) { NodeData trans =
 	 * beginTransaction(); //Nastavení na výchozí hodnoty borderColorTopType =
 	 * null; borderColorRightType = null; borderColorBottomType = null;
@@ -1015,12 +1024,12 @@ public class DeclarationTransformer {
 	 * borderWidthLeftType = null; borderWidthTopValue = null;
 	 * borderWidthRightValue = null; borderWidthBottomValue = null;
 	 * borderWidthLeftValue = null;
-	 * 
+	 *
 	 * //Každou z částí lze nastavit pouze jednou. Není přípustné aby se v jedné
 	 * deklaraci //objevila například 2x barva. K určení slouží následující
 	 * proměnné boolean processedColor = false; boolean processedStyle = false;
 	 * boolean processedWidth = false;
-	 * 
+	 *
 	 * for(Term t : d.getTerms()) { //Pokud je první (a jediný) identifikátor
 	 * inherit, pak se nastaví všecm hodnotám inherit //Pokud by se inherit
 	 * objevilo až například jako třetí term, dojde k ignorování celé deklarace
@@ -1041,12 +1050,12 @@ public class DeclarationTransformer {
 	 * borderWidthTopValue = null; borderWidthRightValue = null;
 	 * borderWidthBottomValue = null; borderWidthLeftValue = null; return true;
 	 * } else { rollbackTransaction(trans); return false; } }
-	 * 
+	 *
 	 * //Vytvořím pomocnou deklaraci, která obsahuje jeden jediný term (ten
 	 * aktuální) //a v jednotlivých blocích se pokouším tuto deklaraci
 	 * zpracovat. Declaration tmpDeclaration = new DataDeclaration("border");
 	 * tmpDeclaration.getTerms().add(t);
-	 * 
+	 *
 	 * //Vyzkouším, jestli se jedná o barvu
 	 * tmpDeclaration.setProperty("border-color");
 	 * if(processBorderColor(tmpDeclaration)) { //Jedná se o barvu. Zjistím,
@@ -1061,7 +1070,7 @@ public class DeclarationTransformer {
 	 * if(processBorderWidth(tmpDeclaration)) { if(processedWidth) {
 	 * rollbackTransaction(trans); return false; } else { processedWidth = true;
 	 * continue; } }
-	 * 
+	 *
 	 * //Pokud program dojde sem, znamená to že term není ani color, style nebo
 	 * width - ignorace celé deklarace rollbackTransaction(trans); return false;
 	 * } return true; }
@@ -1170,7 +1179,7 @@ public class DeclarationTransformer {
 
             // valid function names
             final Set<String> validFuncNames = new HashSet<String>(Arrays
-                    .asList("matrix", "translate", "translatex", "translatey", 
+                    .asList("matrix", "translate", "translatex", "translatey",
                             "scale", "scalex", "scaley", "rotate", "skew", "skewx",
                             "skewy", "matrix3d", "translate3d", "translateZ",
                             "scale3d", "scalez", "rotate3d", "rotatex", "rotatey",
@@ -1195,11 +1204,11 @@ public class DeclarationTransformer {
             return true;
         }
     }
-    
+
     @SuppressWarnings("unused")
     private boolean processTransformOrigin(Declaration d,
             Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
-        
+
         if (d.size() == 1
             && genericTermIdent(BorderSpacing.class, d.get(0), ALLOW_INH, d.getProperty(), properties))
         {
@@ -1274,7 +1283,7 @@ public class DeclarationTransformer {
                     }
                     else
                         value = (TermLengthOrPercent) term;
-                    
+
                     if (value != null)
                     {
                         if (hpos == null)
@@ -1309,7 +1318,7 @@ public class DeclarationTransformer {
         else
             return false; //invalid number of arguments
     }
-    
+
 	@SuppressWarnings("unused")
 	private boolean processWidth(Declaration d,
 			Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
@@ -1865,11 +1874,11 @@ public class DeclarationTransformer {
     /**
      * Processes an unknown property and stores its value. Unknown properties containing
      * multiple values are ignored (the interpretation is not clear).
-     * 
+     *
      * @param d the declaration.
      * @param properties the properties.
      * @param values the values.
-     * 
+     *
      * @return <code>true</code>, if the property has been pared successfully
      */
     private boolean processAdditionalCSSGenericProperty(Declaration d, Map<String, CSSProperty> properties, Map<String, Term<?>> values)
@@ -1877,7 +1886,7 @@ public class DeclarationTransformer {
     	if (d.size() == 1)
     	{
 	        Term<?> term = d.get(0);
-	
+
 	        if (term instanceof TermIdent)
 	            return genericProperty(GenericCSSPropertyProxy.class, (TermIdent) term, true, properties, d.getProperty());
 	        else
@@ -1891,8 +1900,8 @@ public class DeclarationTransformer {
     		log.warn("Ignoring unsupported property " + d.getProperty() + " with multiple values");
     		return false;
     	}
-    }          
-	
+    }
+
 	@SuppressWarnings("unused")
 	private boolean processContent(Declaration d,
 			Map<String, CSSProperty> properties, Map<String, Term<?>> values) {
@@ -1942,11 +1951,11 @@ public class DeclarationTransformer {
 
 	/**
 	 * Variator for list style. Grammar:
-	 * 
+	 *
 	 * <pre>
 	 * [ 'list-style-type' || 'list-style-position' || 'list-style-image' ]
 	 * | inherit
-	 * 
+	 *
 	 * @author kapy
 	 */
 	private final class ListStyleVariator extends Variator {
@@ -2002,12 +2011,12 @@ public class DeclarationTransformer {
 	 * Variator for border side.
 	 * Grammar:
 	 * <pre>
-	 * [ <border-width> || <border-style> || <'border-top-color'> ] 
+	 * [ <border-width> || <border-style> || <'border-top-color'> ]
 	 * | inherit
 	 * </pre>
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	private final class BorderSideVariator extends Variator {
 
@@ -2059,14 +2068,14 @@ public class DeclarationTransformer {
 
 	/**
 	 * Outline variator Grammar:
-	 * 
+	 *
 	 * <pre>
-	 * [ 'outline-color' || 'outline-style' || 'outline-width' ] 
+	 * [ 'outline-color' || 'outline-style' || 'outline-width' ]
 	 * | inherit
 	 * </pre>
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	private final class OutlineVariator extends Variator {
 
@@ -2119,16 +2128,16 @@ public class DeclarationTransformer {
 	 * Font variator:
 	 * Grammar:
 	 * <pre>
-	 * 	[ 
-	 * 		[ <'font-style'> || <'font-variant'> || <'font-weight'> ]? 
-	 * 		<'font-size'> 
-	 * 		[ / <'line-height'> ]? 
-	 * 		<'font-family'> 
-	 * 	] 
-	 * 	| caption | icon | menu | message-box 
+	 * 	[
+	 * 		[ <'font-style'> || <'font-variant'> || <'font-weight'> ]?
+	 * 		<'font-size'>
+	 * 		[ / <'line-height'> ]?
+	 * 		<'font-family'>
+	 * 	]
+	 * 	| caption | icon | menu | message-box
 	 * 	| small-caption | status-bar | inherit
 	 * </pre>
-	 * 
+	 *
 	 * @author kapy
 	 *
 	 */
@@ -2156,7 +2165,7 @@ public class DeclarationTransformer {
 			names.add("font-family");
 			types.add(FontFamily.class);
 		}
-		
+
 		final Set<FontFamily> allowedFamilies = EnumSet
         .complementOf(EnumSet.of(FontFamily.INHERIT,
             FontFamily.list_values));
@@ -2349,7 +2358,7 @@ public class DeclarationTransformer {
 		private void storeFamilyName(TermList storage, String name,
 				boolean composed) {
 
-			
+
 
 			if (name == null || "".equals(name) || name.length() == 0)
 				return;
@@ -2379,19 +2388,19 @@ public class DeclarationTransformer {
 	        if (generic != null) {
 	          term = tf.createTerm(generic);
 	          if (!empty)
-	            term.setOperator(Operator.COMMA);	          
+	            term.setOperator(Operator.COMMA);
 	        }
 	        // generic name not found, store as family name
 	        // we have to append even operator
 	        else {
 	          term = tf.createString(name);
 	          if (!empty)
-	            term.setOperator(Operator.COMMA);  
+	            term.setOperator(Operator.COMMA);
 	        }
 	        fontTerms.put(cacheKey, term);
 			  }
 			  storage.add(term);
-			  
+
 			}
 		}
 
@@ -2405,13 +2414,13 @@ public class DeclarationTransformer {
 	 * Background variator.
 	 * Grammar:
 	 * <pre>
-	 * [ <'background-color'> || <'background-image'> 
-	 * 		|| <'background-repeat'> || <'background-attachment'> 
+	 * [ <'background-color'> || <'background-image'>
+	 * 		|| <'background-repeat'> || <'background-attachment'>
 	 * 		|| <'background-position'> [ / <background-size> ]?
-	 * ] 
+	 * ]
 	 * | inherit
 	 * </pre>
-	 * 
+	 *
 	 * @author kapy
 	 */
 	private final class BackgroundVariator extends Variator {
@@ -2509,7 +2518,7 @@ public class DeclarationTransformer {
                         assigned++;
                     }
                 }
-                
+
                 // no values could be used
 				if (assigned == 0)
 					return false;
@@ -2562,7 +2571,7 @@ public class DeclarationTransformer {
                     sz[1] = tf.createIdent("auto");
                 else //if used two elements, inform master
                     iteration.inc();
-                
+
                 //create term list from the values, replace unspecified values by center
                 TermList szlist = tf.createList(2);
                 szlist.add(sz[0]);
@@ -2572,13 +2581,13 @@ public class DeclarationTransformer {
                 properties.put(names.get(SIZE), BackgroundSize.list_values);
                 values.put(names.get(SIZE), szlist);
                 return true;
-                
+
 			default:
 				return false;
 			}
 		}
 
-		private void storeBackgroundPosition(Term<?>[] storage, BackgroundPosition bp, Term<?> term) 
+		private void storeBackgroundPosition(Term<?>[] storage, BackgroundPosition bp, Term<?> term)
 		{
 			if (bp == BackgroundPosition.LEFT)
 				setPositionValue(storage, 0, tf.createPercent(0.0f));
@@ -2593,7 +2602,7 @@ public class DeclarationTransformer {
 			else
 			    setPositionValue(storage, -1, term);
 		}
-		
+
 		private void setPositionValue(Term<?>[] s, int index, Term<?> term)
 		{
 		    switch (index) {
@@ -2629,16 +2638,16 @@ public class DeclarationTransformer {
                 default:
                     return true;
             }
-        }		
-		
+        }
+
 	}
 
 	/**
 	 * Border variator. Grammar: [ <border-width> || <border-style> ||
 	 * <border-top-color> ] | inherit
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	private final class BorderVariator extends Variator {
 
@@ -2721,15 +2730,15 @@ public class DeclarationTransformer {
             for (Repeater r : repeaters)
                 r.assignDefaults(properties, values);
         }
-		
+
 
 	}
 
 	/**
 	 * Border style repeater
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	private final class BorderStyleRepeater extends Repeater {
 
@@ -2752,9 +2761,9 @@ public class DeclarationTransformer {
 
 	/**
 	 * Border color repeater
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	private final class BorderColorRepeater extends Repeater {
 
@@ -2778,9 +2787,9 @@ public class DeclarationTransformer {
 
 	/**
 	 * Border width repeater
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	private final class BorderWidthRepeater extends Repeater {
 
@@ -2804,9 +2813,9 @@ public class DeclarationTransformer {
 
     /**
      * Border radius repeater
-     * 
+     *
      * @author burgetr
-     * 
+     *
      */
     private final class BorderRadiusRepeater extends Repeater {
 
@@ -2825,11 +2834,11 @@ public class DeclarationTransformer {
 
             Term<?> term = terms.get(i);
             String name = names.get(i);
-            
+
             if (genericTermIdent(type, terms.get(i), AVOID_INH, names.get(i), properties))
             {
                 return true;
-            }       
+            }
             else if (term instanceof TermList)
             {
                 properties.put(name, BorderRadius.list_values);
@@ -2839,7 +2848,7 @@ public class DeclarationTransformer {
             else
                 return false;
         }
-        
+
         /** Decodes the complicated border-radius declaration into four term pairs */
         public boolean repeatOverMultiTermDeclaration(Declaration d,
                 Map<String, CSSProperty> properties, Map<String, Term<?>> values)
@@ -2856,7 +2865,7 @@ public class DeclarationTransformer {
                     return true;
                 }
             }
-            
+
             //find the slash (if any)
             int slash = -1;
             for (int i = 0; i < d.size(); i++)
@@ -2893,7 +2902,7 @@ public class DeclarationTransformer {
             }
             return repeat(properties, values);
         }
-        
+
         private Term<?>[] createFourTerms(Declaration d, int fromIndex, int toIndex)
                 throws IllegalArgumentException
         {
@@ -2902,7 +2911,7 @@ public class DeclarationTransformer {
             switch (size) {
             case 1:
                 // one term for all value
-                ret[0] = ret[1] = ret[2] = ret[3] = d.get(fromIndex); 
+                ret[0] = ret[1] = ret[2] = ret[3] = d.get(fromIndex);
                 break;
             case 2:
                 ret[0] = ret[2] = d.get(fromIndex);
@@ -2921,7 +2930,7 @@ public class DeclarationTransformer {
                 throw new IllegalArgumentException(
                         "Invalid length of terms in Repeater.");
             }
-            
+
             //when started by a slash, remove the slash from the terms
             if (fromIndex != 0)
             {
@@ -2929,10 +2938,10 @@ public class DeclarationTransformer {
                     if (ret[i].getOperator() == Operator.SLASH)
                         ret[i] = stripSlash(ret[i]);
             }
-            
+
             return ret;
         }
-        
+
         private Term<?> stripSlash(Term<?> src)
         {
             if (src.getOperator() == Operator.SLASH)
@@ -2947,14 +2956,14 @@ public class DeclarationTransformer {
             else
                 return src;
         }
-        
+
     }
-    
+
 	/**
 	 * Margin repeater
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	private final class MarginRepeater extends Repeater {
 
@@ -2985,9 +2994,9 @@ public class DeclarationTransformer {
 
 	/**
 	 * Padding repeater
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	private final class PaddingRepeater extends Repeater {
 

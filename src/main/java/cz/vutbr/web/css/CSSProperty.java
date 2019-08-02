@@ -7,29 +7,29 @@ import java.util.Map;
 /**
  * Interface for definition of CSS properties. This interface simplifies storing
  * of values in maps, and provides basic inheritance support.
- * 
+ *
  * All implementations of this interface should provide static value with
  * signature:
- * 
+ *
  * <pre><b>public static</b> CSSProperty valueOf(String value);</pre>
- * 
+ *
  * to retrieve instance of property by string value. Since enum classes
  * provides this value automatically, it is encouraged to use them.
- * 
+ *
  * For make use of enums easier, this contract should be followed:
- * 
+ *
  * All values directly represented in CSS style sheet such as:
- * <code>float: <b>left</b>;</code> or <code>background-repeat: 
- * <b>repeat-x</b>;</code> should to converted to upper case and 
+ * <code>float: <b>left</b>;</code> or <code>background-repeat:
+ * <b>repeat-x</b>;</code> should to converted to upper case and
  * all not alphanumeric characters should be converted into underscores
  * (<code>_</code>), for example <code>REPEAT_X</code>
- * 
- * All other values, with essentially requires additional data, should 
+ *
+ * All other values, with essentially requires additional data, should
  * broke enum standard and use lower case letters only. This way it is
- * guaranteed that this value won't never be considered as a keyword. 
- * 
+ * guaranteed that this value won't never be considered as a keyword.
+ *
  * @author kapy
- * 
+ *
  */
 public interface CSSProperty {
 
@@ -43,11 +43,11 @@ public interface CSSProperty {
     public static final String FONT_MONOSPACED = java.awt.Font.MONOSPACED;
     public static final String FONT_CURSIVE = "Zapf-Chancery";
     public static final String FONT_FANTASY = "Western";
-    
-    
+
+
 	/**
 	 * Allows declarations of properties to inherit or to be inherited
-	 * 
+	 *
 	 * @return <code>true</code> in case that this property could be inherited
 	 *         from parent, <code>false</code> elsewhere
 	 */
@@ -55,7 +55,7 @@ public interface CSSProperty {
 
 	/**
 	 * Allows to check whether property equals <code>inherit</code> value
-	 * 
+	 *
 	 * @return <code>true</code>if value is <code>INHERIT</code>,
 	 *         <code>false</code> otherwise
 	 */
@@ -63,20 +63,20 @@ public interface CSSProperty {
 
 	/**
 	 * Textual representation of CSS property
-	 * 
+	 *
 	 * @return String
 	 */
 	public String toString();
-	
+
 	/***************************************************************
 	 * TRANSLATOR *
 	 ****************************************************************/
 
 	/**
 	 * Retrieves value of property of given class and text value
-	 * 
+	 *
 	 * @author kapy
-	 * 
+	 *
 	 */
 	public static class Translator {
 
@@ -87,7 +87,9 @@ public interface CSSProperty {
 
 		/**
 		 * Retrieves CSSProperty by its name and class
-		 * 
+		 *
+		 * @param <T>
+		 *            The expected class of the value.
 		 * @param type
 		 *            Class of CSSProperty
 		 * @param value
@@ -109,17 +111,18 @@ public interface CSSProperty {
 //				/*
 //				throw new IllegalArgumentException("Unable to get: " + value
 //						+ " for: " + type.getName(), e);
-//				*/		
+//				*/
 //			}
 		  if(GenericCSSPropertyProxy.class.isAssignableFrom(type)) {
 		    return (T) GenericCSSPropertyProxy.valueOf(value);
-		  } else { 
+		  } else {
 		    return (T) Enum.valueOf((Class)type, value);
 		  }
 		}
-		
+
 		/**
 		 * Creates "inherit" instance
+		 * @param <T> The expected class of the value.
 		 * @param type Type of CSS property
 		 * @return Should always return CSS instance. If <code>null</code> is returned, something
 		 * is flawed.
@@ -340,7 +343,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-		
+
 		@Override
 		public String toString() {
 			return text;
@@ -369,7 +372,7 @@ public interface CSSProperty {
             return text;
         }
     }
-    
+
 	public enum Border implements CSSProperty {
 		component_values(""), INHERIT("inherit");
 
@@ -408,7 +411,7 @@ public interface CSSProperty {
 
 		public boolean equalsInherit() {
 			return this == INHERIT;
-		}		
+		}
 
 		@Override
 		public String toString() {
@@ -462,7 +465,7 @@ public interface CSSProperty {
             return text;
         }
     }
-	
+
 	public enum BorderSpacing implements CSSProperty {
 		list_values(""), INHERIT("inherit");
 
@@ -552,7 +555,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-	
+
 		@Override
 		public String toString() {
 			return text;
@@ -586,12 +589,12 @@ public interface CSSProperty {
 
 	public enum FontFamily implements CSSProperty {
 		list_values("", ""), SERIF("serif", FONT_SERIF), SANS_SERIF("sans-serif", FONT_SANS_SERIF),
-		CURSIVE("cursive", FONT_CURSIVE), FANTASY("fantasy", FONT_FANTASY), MONOSPACE("monospace", FONT_MONOSPACED), 
+		CURSIVE("cursive", FONT_CURSIVE), FANTASY("fantasy", FONT_FANTASY), MONOSPACE("monospace", FONT_MONOSPACED),
 		INHERIT("inherit", "");
-		
+
 		private String text;
 		private String awtval;
-		
+
 		private FontFamily(String text, String awtval) {
 			this.text = text;
 			this.awtval = awtval;
@@ -609,7 +612,7 @@ public interface CSSProperty {
 		public String toString() {
 			return text;
 		}
-		
+
 		public String getAWTValue() {
 		    return awtval;
 		}
@@ -738,7 +741,7 @@ public interface CSSProperty {
 			return text;
 		}
 	}
-	
+
     public enum TabSize implements CSSProperty {
         integer(""), length(""), INHERIT("inherit");
 
@@ -761,7 +764,7 @@ public interface CSSProperty {
             return text;
         }
     }
-    
+
 	public enum CaptionSide implements CSSProperty {
 		TOP("top"), BOTTOM("bottom"), INHERIT("inherit");
 
@@ -801,7 +804,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-	
+
 		@Override
 		public String toString() {
 			return text;
@@ -1043,7 +1046,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-		
+
 		@Override
 		public String toString() {
 			return text;
@@ -1066,7 +1069,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-		
+
 		@Override
 		public String toString() {
 			return text;
@@ -1308,7 +1311,7 @@ public interface CSSProperty {
             return text;
         }
     }
-    
+
 	public enum Orphans implements CSSProperty {
 		integer(""), INHERIT("inherit");
 
@@ -1632,7 +1635,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-		
+
 		@Override
 		public String toString() {
 			return text;
@@ -1724,7 +1727,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-		
+
 		@Override
 		public String toString() {
 			return text;
@@ -1748,7 +1751,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-		
+
 		@Override
 		public String toString() {
 			return text;
@@ -2053,7 +2056,7 @@ public interface CSSProperty {
         public boolean equalsInherit() {
             return this == INHERIT;
         }
-    
+
         @Override
         public String toString() {
             return text;
@@ -2082,7 +2085,7 @@ public interface CSSProperty {
             return text;
         }
     }
-    
+
 	public enum UnicodeBidi implements CSSProperty {
 		NORMAL("normal"), EMDEB("embed"), BIDI_OVERRIDE("bidi-override"), INHERIT(
 				"inherit");
@@ -2099,7 +2102,7 @@ public interface CSSProperty {
 
 		public boolean equalsInherit() {
 			return this == INHERIT;
-		}		
+		}
 
 		@Override
 		public String toString() {
@@ -2314,7 +2317,7 @@ public interface CSSProperty {
 		public boolean equalsInherit() {
 			return this == INHERIT;
 		}
-		
+
 		@Override
 		public String toString() {
 			return text;
@@ -2355,15 +2358,15 @@ public interface CSSProperty {
          * Creates a new instance of the GenericCSSPropertyProxy. This method
          * simulates the method valueOf(String) of the other CSS attributes that
          * are implmented as enums.
-         * 
+         *
          * @param value the property value.
-         * 
+         *
          * @return a new insance that contains the property value.
          */
         public static GenericCSSPropertyProxy valueOf(final String value)
         {
             return new GenericCSSPropertyProxy(value == null ? "" : value.toLowerCase());
         }
-	}	
-	
+	}
+
 }
